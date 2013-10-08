@@ -1,0 +1,9 @@
+*.pyc
+*.pyx
+*.pyo
+*.swp
+*.swo
+*.db
+.idea
+docs/build
+node_modules
