@@ -233,6 +233,11 @@ BASE_REQUIREMENTS = [
     {'file': 'salt_minion_pillar_roots'},
 ]
 
+# these salt modules/functions are run after everything else
+POST_KICK = [
+    'state.sls oms.admin',
+]
+
 # if creating your own config, this is the bare minimum
 DEFAULT_CONFIG = {
         'repos': {
@@ -240,7 +245,8 @@ DEFAULT_CONFIG = {
         },
         'minion_config': MINION_CONFIG,
         'kickstart_state': BASE_STATES,
-        'requirements': BASE_REQUIREMENTS
+        'requirements': BASE_REQUIREMENTS,
+        'post_kick': POST_KICK
     }
 
 
@@ -710,6 +716,14 @@ def main():
         if args.highstate:
             logger.debug('run state.highstate to apply states from external repo')
             salt_client('state.highstate')
+        # we're done with kickstart core, so run extra modules if specified
+        if config.has_key('post_kick'):
+            for run_me in config['post_kick']:
+                logger.debug('calling post kickstart function %s' % run_me)
+                # rework input: salt_client(func, [arg1, arg2])
+                f = run_me.split(' ')
+                func = [f[0], f[1:]]
+                salt_client(*func)
         # remove all the temporary git repos we cloned.. but skip if in debug mode
         if not args.debug:
             for repo in tmp_paths_to_purge:

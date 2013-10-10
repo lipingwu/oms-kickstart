@@ -10,11 +10,12 @@ the script..
 
 even with its flaws, this is some serious awesome!
 
-overall, this script completes three primary tasks:
+overall, this script completes four primary tasks:
 
   1) install and configure salt-minion on the host
   2) run state.high to apply some initial states
   3) run state.highstate to apply more advanced states
+  4) if specified, run additional salt modules/functions
 
 default config and state data is included in the script, so no
 external config is necessary and the script can run by itself.
