@@ -72,3 +72,5 @@ requirements:
   - file: salt_minion_files_roots
   - file: salt_minion_pillar_roots
   
+post_kick:
+  - 'state.sls oms.admin'
