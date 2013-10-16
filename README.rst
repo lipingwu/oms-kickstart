@@ -70,12 +70,32 @@ requirements
   any git repositories, else git repos ought to be public.
 * run as root, or with ``sudo``, though running with ``sudo`` has not been
   tested (let us know how it works for you!)
+* use tmux so you don't run into problems getting disconnected.
+
+
+use tmux
+~~~~~~~~
+
+Given the details of how SSH and long-running processes work, it is best to run
+the kickstart from within an instance of tmux, so first start tmux with:
+``tmux``. A full tmux tutorial is beyond the scope of this document, but here
+are a few helpful details:
+
+* If you lose your connection to the VM, you can simply login again and run
+  ``tmux att``.
+* Commands are prefixed with a modifier, ``Ctrl-b`` by default.
+* You can separate from a running instance, to reattach later, with:
+  ``Ctrl-b,d``.
+* Create a new window with ``Ctrl-b,c`` (*create*), and switch between with
+  ``p``, ``n``, and ``l``, for *previous*, *next* and *last*, respectively.
+* Exit tmux by closing all open windows (exit the shell with ``exit``).
 
 
 default OMS deployment
 ~~~~~~~~~~~~~~~~~~~~~~
 
-* assuming you are starting with a new VM..
+assuming you are starting with a new VM, and are in an instance of tmux..
+
 * create an ssh key with ssh-keygen, saved to ``~/.ssh/id_rsa``
 * add the pub key to your github account, or whereever the git repos are stored
 * copy `the kickstart script`_ and `the external config`_ to the VM
