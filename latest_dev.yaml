@@ -71,7 +71,7 @@ requirements:
   - file: ssh_config
   - file: salt_minion_files_roots
   - file: salt_minion_pillar_roots
-  
+
 # execute these salt modules after kickstart complete
 post_kick:
   - 'state.sls oms.admin'

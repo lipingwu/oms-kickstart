@@ -2,13 +2,13 @@ repos:
   states:
     oms-deploy:
       url: git@github.com:IDCubed/oms-deploy.git
-      rev: qa-develop
+      rev: v0.8.3-rc1
       # specifies the directory within the repo (where to find states)
       copy_path: salt/states
   pillar:
     oms-deploy-pillar:
       url: git@github.com:IDCubed/oms-deploy.git
-      rev: qa-develop
+      rev: v0.8.3-rc1
       copy_path: salt/pillar
 
 minion_config:
@@ -71,7 +71,7 @@ requirements:
   - file: ssh_config
   - file: salt_minion_files_roots
   - file: salt_minion_pillar_roots
-  
+
 # execute these salt modules after kickstart complete
 post_kick:
   - 'state.sls oms.admin'
