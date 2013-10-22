@@ -461,10 +461,29 @@ def add_pkg_repository(ppa,
         subprocess.check_call(cmd)
 
 
+def add_saltinwound_pkgrepo(url=None,
+                            test=False):
+    '''
+    add unofficial pkgrepo from saltinwound.org - so we can get older versions
+    of salt packages
+
+    '''
+    codename = distro_codename()
+    salt_src = ('/etc/apt/sources.list.d/saltstack-salt-%s.list' % codename)
+    if not test:
+        with open(salt_src, 'w') as apt_source:
+            apt_source.write('deb %s %s main' % (url, codename))
+        subprocess.check_call(('apt-key', 'adv', '--recv-keys', '--keyserver',
+                               'keyserver.ubuntu.com', '0E27C0A6'))
+
+
 def install_package(package,
                     test=False):
     '''
-    install debian pacakge. If ``test`` is True, run in noop mode.
+    install debian pacakge. If ``test`` is True, run in noop mode. note that apt
+    runs in a completely non-interactive mode which will step on existing config
+    files even if updated. this allows the script to rerun, and override the
+    results of a previous run, when necessary.
 
     '''
     cmd = ('apt-get', 'install', '-y', '--force-yes', package)
@@ -473,15 +492,14 @@ def install_package(package,
         subprocess.check_call(cmd)
 
 
-def install_salt_minion(stop_service=False,
+def install_salt_minion(version='0.16.4',
                         test=False):
     '''
-    Install salt-minion from saltstack Ubuntu PPA. If ``stop_service`` is True,
-    ensure the salt-minion service is not running after installing the package.
+    Install salt-minion using saltstack Ubuntu PPA for the depenedencies, and
+    an unofficial package repo available at archive.robotinfra.com to provide
+    the ability to install previous (stable) versions of salt packages.
 
     If ``test`` is True, run in noop mode
-
-    todo:: uncomment stop_service conditional and subprocess.check_call()
 
     '''
     logger.info('Update apt before we install anything')
@@ -489,6 +507,8 @@ def install_salt_minion(stop_service=False,
     logger.info('Install salt-minion package..')
     install_package('python-software-properties', test=test)
     add_pkg_repository('ppa:saltstack/salt', test=test)
+    unofficial_url = ('http://archive.robotinfra.com/mirror/salt/%s/' % version)
+    add_saltinwound_pkgrepo(unofficial_url)
     update_apt(test=test)
     install_package('salt-minion', test=test)
 
