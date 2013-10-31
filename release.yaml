@@ -75,3 +75,4 @@ requirements:
 # execute these salt modules after kickstart complete
 post_kick:
   - 'state.sls oms.admin'
+  - 'state.highstate'
