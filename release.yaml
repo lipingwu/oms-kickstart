@@ -2,13 +2,13 @@ repos:
   states:
     oms-deploy:
       url: git@github.com:IDCubed/oms-deploy.git
-      rev: v0.8.3-rc1
+      rev: master
       # specifies the directory within the repo (where to find states)
       copy_path: salt/states
   pillar:
     oms-deploy-pillar:
       url: git@github.com:IDCubed/oms-deploy.git
-      rev: v0.8.3-rc1
+      rev: master
       copy_path: salt/pillar
 
 minion_config:
