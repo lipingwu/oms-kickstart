@@ -1,0 +1,73 @@
+repos:
+  states:
+    oms-deploy:
+      url: git@github.com:IDCubed/oms-deploy.git
+      rev: qa-develop
+      # specifies the directory within the repo (where to find states)
+      copy_path: salt/states
+
+minion_config:
+    path: /etc/salt/minion
+    contents:
+      master: 127.0.0.1
+      file_roots:
+        base:
+          - /etc/salt/states
+      pillar_roots:
+        base:
+          - /etc/salt/pillar
+      file_client: local
+
+# base states applied after minion is installed
+kickstart_state:
+  base_packages:
+    pkg:
+      - latest
+      - names:
+          - git
+          - rsync
+          - openssh-client
+  ssh_config:
+    file:
+      - managed
+      - name: /etc/ssh/ssh_config
+      - contents: |
+          Host *
+          StrictHostKeyChecking no
+          UserKnownHostsFile=/dev/null
+      - require:
+          - pkg: base_packages
+  install_to:
+    file:
+      - directory
+      - name: /etc/salt
+      - makedirs: True
+  salt_minion_files_roots:
+    file:
+      - directory
+      - name: /etc/salt/states
+      - makedirs: True
+      - clean: True
+      - require:
+          - file: install_to
+  salt_minion_pillar_roots:
+    file:
+      - directory
+      - name: /etc/salt/pillar
+      - makedirs: True
+      - clean: True
+      - require:
+          - file: install_to
+
+
+# these are appended to git states created on the fly
+requirements:
+  - pkg: base_packages
+  - file: ssh_config
+  - file: salt_minion_files_roots
+  - file: salt_minion_pillar_roots
+
+# execute these salt modules after kickstart complete
+post_kick:
+  - 'state.sls oms.admin'
+  - 'state.highstate'
