@@ -344,10 +344,17 @@ class GitRepository(object):
         self.rev = rev
         self.copy_path = copy_path
 
+
     def __repr__(self):
+        '''
+        if we have a revision specified, return: url (rev)
+        else: url
+
+        '''
         if self.rev:
             return '%s (%s)' % (self.url, self.rev)
         return self.url
+
 
     def get_states(self,
                    clone_to,
@@ -594,7 +601,7 @@ def configure_salt_minion(path,
     logger.debug(('contents: %s' % json.dumps(config, indent=4)))
     if not test:
         with open(path, 'w') as config_file:
-            yaml.dump(config, config_file)
+            yaml.safe_dump(config, config_file)
 
 
 def process_repos(repos=None):
