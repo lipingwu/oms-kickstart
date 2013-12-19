@@ -262,6 +262,71 @@ class SSHKey(object):
     pass
 
 
+class PillarConfig(object):
+    '''
+    Provided a dictionary ``pillar``, create an object representing our need to
+    write these pillar keys to .sls for salt to pick up and use. Autogenerate the
+    states needed to create these pillar .sls properly as part of a larger state
+    tree being applied.
+
+    '''
+    def __init__(self, pillar):
+        self.pillar = pillar
+
+    def dump_pillar(self):
+        '''
+        use yaml.dump_safe() to write out pillar directly, not to a file
+        '''
+        import yaml
+        return yaml.safe_dump(self.pillar)
+
+    def get_states(self, base_path, requirements):
+        '''
+        generate the salt states needed to create top.sls and bootstrap.sls, then
+        dump the pillar data we've received from the kickstart config into, the
+        bootstrap.sls pillar file.
+
+        the auto-generated states declare the files written to ``base_path``, the
+        target directory to write these pillar .sls files to.
+
+        ``requirements`` is expected to be a list of strings, acting as references
+        to other salt states that are required for these states to be applied at
+        the right time.
+
+        we expect pillars root already has a state, and is actually included in
+        the ``requirements`` list passed to this method.
+
+        '''
+        # details of top and boostrap pillar .sls
+        base_path_requirement = [{'file': base_path}]
+        top_file = os.path.join(base_path, 'top.sls')
+        top_file_contents = os.linesep.join(('base:',
+                                             "  '*':",
+                                             '    - bootstrap'))
+        bootstrap_sls = os.path.join(base_path, 'bootstrap.sls')
+        # the states to write out pillar provided to this object
+        states = {
+            # /base_path/top.sls
+            top_file: {
+                'file': [
+                    'managed',
+                    # this host will get bootstrap.sls
+                    {'contents': top_file_contents},
+                    {'require': [{'file': base_path}]}
+                ]
+            },
+            bootstrap_sls: {
+                'file': [
+                    'managed',
+                    {'contents': self.dump_pillar()},
+                    {'require': base_path_requirement}
+                ]
+            },
+
+        }
+        return states
+
+
 class GitRepository(object):
     '''
     Represents a local or remote Git repository, and simplifies the work to
@@ -552,12 +617,13 @@ def update_kickstart_state(states_repos,
                            base_states={},
                            base_requirements=[],
                            pillar_repos=None,
+                           pillar_config=None,
                            ssh_key=None):
     '''
-    Provided a list of ``states repos`` an optional ``pillar_repo``, and an
-    optional ``ssh_key``, compile the complete highstate data to kickstart this
-    OMS host. ``base_states`` is used as the foundation to add state
-    definitions to.
+    Provided a list of ``states repos``, an optional ``pillar_repo`` or
+    ``pillar_config``, and an optional ``ssh_key``, compile the complete
+    highstate data to kickstart this OMS host. ``base_states`` is used as the
+    foundation to add state definitions to.
 
     Note that this is doing one thing that should be made clear: As defined, the
     base states are not correct, we need to update them with the states needed
@@ -596,6 +662,10 @@ def update_kickstart_state(states_repos,
             states.update(repo.get_states(clone_to=tmp_git,
                                           requirements=base_requirements,
                                           rsync_to=PILLAR_ROOT))
+    # if we've got a Pillar object, include states for top.sls and bootstrap.sls
+    if pillar_config:
+        states.update(pillar_config.get_states(base_path=PILLAR_ROOT,
+                                               requirements=base_requirements))
     # XXX - not yet supported
     # add states for ssh private key
     if ssh_key is not None:
@@ -700,11 +770,18 @@ def main():
 
     states_repos = process_repos(states_repos_list)
 
+    # there is likely a more concise way to express these 3 try/except blocks
     try:
         pillar_repos = process_repos(config['repos']['pillar'])
     except KeyError:
         logger.info('no pillar repo found in config, skipping')
         pillar_repos = None
+
+    try:
+        pillar_config = PillarConfig(config['pillar'])
+    except KeyError:
+        logger.info('Missing SSH key configuration, hope Git repo is public.')
+        pillar_config = None
 
     try:
         ssh_key = SSHKey(config['ssh_key'])
@@ -716,6 +793,7 @@ def main():
                                   config['kickstart_state'],
                                   config['requirements'],
                                   pillar_repos,
+                                  pillar_config,
                                   ssh_key)
     if args.debug:
         import yaml
