@@ -156,6 +156,12 @@ config keys:
    - ``pillar``: single-item dictionary describing the git repo to use for
      pillar data. only one repo may be used. this key is optional.
 
+* ``pillar``: a dictionary of pillar config to write to the new minion installed,
+  as top.sls and bootstrap.sls. this key is optional, and may even be used in
+  conjunction with the pillar from git repos, eg ``[repos][pillar]``, though do
+  be careful with what files and keys step on what. this must be pure YAML, no
+  jinja/etc as with normal .sls
+
 * ``minion_config``: should include two subkeys..
    - path: the full path to where the minion config should be written
    - contents: the contents of the minion config, as YAML
