@@ -126,6 +126,23 @@ additional salt modules may be specified with the ``post_kick`` config key, the
 script will run each of these listed after ``state.high/highstate``.
 
 
+stack the configs
+~~~~~~~~~~~~~~~~~
+
+it is possible to provide the config to oms-kickstart as a set of files, just
+include a separate ``-c file.yaml`` for each file to include:
+
+.. code::
+
+   python kickstart-oms.py -H -d -c config/qa.yaml -c config/pillar.yaml
+
+
+.. note::
+
+   the keys from each file are merged together into one dictionary, duplicate
+   keys will step on existing keys when merged.
+
+
 yaml config
 -----------
 
