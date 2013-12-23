@@ -1,0 +1,54 @@
+# begin embedded pillar config
+pillar:
+  message_do_not_modify: "### This configuration is managed by OMS Systems Automation with SaltStack ###"
+  smtpd:
+    target: /root/src/opensmtpd-5.3-portable.tar.gz
+    source: http://www.opensmtpd.org/archives/opensmtpd-5.3p1.tar.gz
+    source_hash: md5=e98dfbfa17be1ff8f1e091319dfca4d8
+    compile_me: /root/src/opensmtpd-5.3p1
+  oms:
+    user: root
+    group: root
+    home: /var/oms
+    src: /var/oms/src
+    repos:
+      oms-docs:
+        url: git@github.com:IDCubed/oms-docs.git
+        rev: master
+      oms-deploy:
+        url: git@github.com:IDCubed/oms-deploy.git
+        rev: master
+      oms-admin:
+        url: git@github.com:IDCubed/oms-admin.git
+        rev: master
+      oms-kickstart:
+        url: git@github.com:IDCubed/oms-kickstart.git
+        rev: master
+      oidc:
+        url: git@github.com:IDCubed/oms-oidc.git
+        rev: master
+      oms-core:
+        url: git@github.com:IDCubed/oms-core.git
+        rev: master
+      oms-ui:
+        url: git@github.com:IDCubed/oms-ui.git
+        rev: master
+      oms-experimental:
+        url: git@github.com:IDCubed/oms-experimental.git
+        rev: master
+      oms-happathon:
+        url: git@github.com:IDCubed/oms-happathon.git
+        rev: master
+      python-mitreid:
+        url: git@github.com:IDCubed/python-mitreid.git
+        rev: master
+      salt-common:
+        url: git@github.com:IDCubed/salt-common.git
+        rev: master
+      salt-non-common:
+        url: git@github.com:IDCubed/salt-non-common.git
+        rev: master
+      inventory:
+        url: git@github.com:IDCubed/inventory.git
+        rev: master
+# end embedded pillar config

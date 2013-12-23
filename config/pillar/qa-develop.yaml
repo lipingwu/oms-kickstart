@@ -14,31 +14,31 @@ pillar:
     repos:
       oms-docs:
         url: git@github.com:IDCubed/oms-docs.git
-        rev: master
+        rev: qa-develop
       oms-deploy:
         url: git@github.com:IDCubed/oms-deploy.git
-        rev: master
+        rev: qa-develop
       oms-admin:
         url: git@github.com:IDCubed/oms-admin.git
-        rev: master
+        rev: qa-develop
       oms-kickstart:
         url: git@github.com:IDCubed/oms-kickstart.git
-        rev: master
+        rev: qa-develop
       oidc:
-        url: git@github.com:IDCubed/idoic.git
-        rev: master
+        url: git@github.com:IDCubed/oms-oidc.git
+        rev: qa-develop
       oms-core:
         url: git@github.com:IDCubed/oms-core.git
-        rev: master
+        rev: qa-develop
       oms-ui:
         url: git@github.com:IDCubed/oms-ui.git
-        rev: master
+        rev: qa-develop
       oms-experimental:
         url: git@github.com:IDCubed/oms-experimental.git
-        rev: master
+        rev: qa-develop
       oms-happathon:
         url: git@github.com:IDCubed/oms-happathon.git
-        rev: develop
+        rev: master
       python-mitreid:
         url: git@github.com:IDCubed/python-mitreid.git
         rev: master
