@@ -1,3 +1,5 @@
+/packer/crash.log
+/packer/p.log
 *.pyc
 *.pyx
 *.pyo
@@ -7,4 +9,9 @@
 .idea
 docs/build
 node_modules
+packer_cache
+builds
+build
+output-virtualbox
+.vagrant
 id_rsa*

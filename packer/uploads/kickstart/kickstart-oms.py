@@ -1,0 +1,1 @@
+../../../kickstart-oms.py
