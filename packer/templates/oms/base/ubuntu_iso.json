@@ -1,0 +1,56 @@
+{
+    "variables": {
+        "build_name": "oms-base",
+        "oms_version": "latest",
+        "system_user": "oms",
+        "system_pass": "oms",
+        "system_memory": "256",
+    },
+    "builders": [
+        {
+            "vm_name": "{{user `build_name` }}",
+            "type": "virtualbox-iso",
+            "format": "ova",
+            "output_directory": "builds/oms/{{user `oms_version` }}",
+            "guest_os_type": "Ubuntu_64",
+            "guest_additions_mode": "attach",
+            "iso_url": "http://archive.ubuntu.com/ubuntu/dists/precise-updates/main/installer-amd64/current/images/netboot/mini.iso",
+            "iso_checksum": "2aff883e22e4a2f26ef6c10e2c97606e9728832361a3e6214fba7f637ed9a990",
+            "iso_checksum_type": "sha256",
+            "http_directory" : "http_server/ubuntu/12.04/amd64/",
+            "boot_command": [
+                "<esc><esc><wait>",
+                "linux noapic ",
+                "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+                "debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
+                "hostname={{ .Name }} ",
+                "fb=false debconf/frontend=noninteractive ",
+                "console-setup/ask_detect=false ",
+                "keymap=us priority=critical ",
+                "initrd=initrd.gz <enter>"
+            ],
+            "ssh_username": "{{user `system_user` }}",
+            "ssh_password": "{{user `system_pass` }}",
+            "ssh_wait_timeout": "45m",
+            "shutdown_command": "echo '{{user `system_pass` }}' | sudo -S shutdown -P now",
+            "vboxmanage": [
+                ["modifyvm", "{{.Name}}", "--memory", "{{user `system_memory`}}"]
+            ]
+        }
+    ],
+
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "uploads/",
+            "destination": "/home/{{user `system_user` }}/"
+        },
+        {
+            "type": "shell",
+            "execute_command": "echo '{{user `system_pass` }}' | sudo -E -S sh '{{ .Path }}'",
+            "inline": ["/home/{{user `system_user` }}/kickstart/base.sh",
+                       "/home/{{user `system_user` }}/kickstart/vbox_guest.sh",
+                       "/home/{{user `system_user` }}/kickstart/cleanup.sh"]
+        }
+    ]
+}

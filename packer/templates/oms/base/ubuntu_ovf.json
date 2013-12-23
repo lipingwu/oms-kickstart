@@ -1,0 +1,42 @@
+{
+    "variables": {
+        "build_name": "oms-base",
+        "oms_version": "latest",
+        "ovf_path": "builds/ubuntu-base/precise-amd64.ova",
+        "system_user": "oms",
+        "system_pass": "oms",
+        "system_memory": "256"
+    },
+    "builders": [
+        {
+            "vm_name": "{{user `build_name` }}",
+            "type": "virtualbox-ovf",
+            "format": "ova",
+            "output_directory": "builds/oms-base/{{user `oms_version` }}",
+            "ssh_username": "{{user `system_user` }}",
+            "ssh_password": "{{user `system_pass` }}",
+            "ssh_wait_timeout": "45m",
+            "shutdown_command": "echo '{{user `system_pass` }}' | sudo -S shutdown -P now",
+            "source_path": "{{user `ovf_path` }}",
+            "import_opts": "keepallmacs",
+            "vboxmanage": [
+                ["modifyvm", "{{.Name}}", "--memory", "{{user `system_memory`}}"]
+            ]
+        }
+    ],
+
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "uploads/",
+            "destination": "/home/{{user `system_user` }}/"
+        },
+        {
+            "type": "shell",
+            "execute_command": "echo '{{user `system_pass` }}' | sudo -E -S sh '{{ .Path }}'",
+            "inline": ["/home/{{user `system_user` }}/kickstart/base.sh",
+                       "/home/{{user `system_user` }}/kickstart/vbox_guest.sh",
+                       "/home/{{user `system_user` }}/kickstart/cleanup.sh"]
+        }
+    ]
+}

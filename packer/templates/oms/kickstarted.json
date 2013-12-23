@@ -1,0 +1,45 @@
+{
+    "variables": {
+        "ovf_path": "builds/oms-base/latest/oms-base.ova",
+        "build_name": "oms-dev",
+        "oms_version": "latest",
+        "system_user": "oms",
+        "system_pass": "oms",
+        "system_memory": "256",
+        "kickstart_cmd": "python kickstart-oms.py",
+        "kickstart_opts": "-H -c config/qa-develop.yaml -c config/pillar/qa-develop.yaml"
+    },
+    "builders": [
+        {
+            "vm_name": "{{user `build_name` }}",
+            "type": "virtualbox-ovf",
+            "source_path": "{{user `ovf_path` }}",
+            "format": "ova",
+            "output_directory": "builds/oms/{{user `oms_version` }}",
+            "ssh_username": "{{user `system_user` }}",
+            "ssh_password": "{{user `system_pass` }}",
+            "ssh_wait_timeout": "45m",
+            "shutdown_command": "echo '{{user `system_pass` }}' | sudo -S shutdown -P now",
+            "import_opts": "keepallmacs",
+            "vboxmanage": [
+                ["modifyvm", "{{.Name}}", "--memory", "{{user `system_memory`}}"]
+            ]
+        }
+    ],
+
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "uploads/",
+            "destination": "/home/{{user `system_user` }}/"
+        },
+        {
+            "type": "shell",
+            "execute_command": "echo '{{user `system_pass` }}' | sudo -E -S sh '{{ .Path }}'",
+            "inline": ["/home/{{user `system_user` }}/kickstart/base.sh",
+                       "/home/{{user `system_user` }}/kickstart/vbox_guest.sh",
+                       "cd /home/{{user `system_user` }}/kickstart && {{user `kickstart_cmd` }} {{ user `kickstart_opts` }}",
+                       "/home/{{user `system_user` }}/kickstart/cleanup.sh"]
+        }
+    ]
+}
