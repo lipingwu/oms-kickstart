@@ -7,3 +7,4 @@
 .idea
 docs/build
 node_modules
+id_rsa*

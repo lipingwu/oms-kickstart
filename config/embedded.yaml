@@ -1,6 +1,6 @@
 repos:
   states:
-    oms-deploy:
+    oms-salt-core:
       url: git@github.com:IDCubed/oms-salt-core.git
       rev: legacy
       # specifies the directory within the repo (where to find states)

@@ -1,0 +1,58 @@
+SSH Key Setup
+=============
+
+Create SSH keys in this directory. they will be uploaded to the Remote Host and are required to
+checkout code from github.
+
+
+Create the keypair
+------------------
+
+.. code::
+
+   oms% cd oms-kickstart/config/keys
+   oms% ssh-keygen 
+   Generating public/private rsa key pair.
+   Enter file in which to save the key (/home/oms/.ssh/id_rsa): id_rsa
+   Enter passphrase (empty for no passphrase): 
+   Enter same passphrase again: 
+   Your identification has been saved in id_rsa.
+   Your public key has been saved in id_rsa.pub.
+   The key fingerprint is:
+   ee:5b:36:36:cf:aa:34:c5:a9:17:87:a3:4e:b9:bb:68 oms@host.domain.tld
+   The key's randomart image is:
+   +--[ RSA 2048]----+
+   |   a..           |
+   |    t       , .  |
+   |           . . . |
+   |   tO   S o =+.= |
+   |           =o=+.o|
+   | ,..     . ...+ .|
+   |            +=.o.|
+   |      .. ...     |
+   |       lg>l . o  |
+   +-----------------+
+
+
+There should now be two keys in ``oms-kickstart/config/keys/``:
+
+.. code::
+
+   oms% ls -alh 
+   total 20K
+   drwxr-x--- 2 oms oms 4.0K Dec 24 16:25 .
+   drwxr-x--- 4 oms oms 4.0K Dec 24 16:24 ..
+   -rw------- 1 oms oms 1.7K Dec 24 16:25 id_rsa
+   -rw-r----- 1 oms oms  412 Dec 24 16:25 id_rsa.pub
+   -rw-r----- 1 oms oms   97 Dec 24 16:25 README
+
+
+Add to Github
+-------------
+
+Add the public key to your github account via https://github.com/settings/ssh:
+
+.. code::
+
+   oms% cat id_rsa.pub
+   ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTQiAAIiuTIgwKUMDZBBkeqkluSTIXz53c3oZIusWQMl4sjRd8NC0P5MgxeXAThF4tzA/g76uRdxzvEqMZdwO1rUOgSuLfcFUGk65Zlwjf7gFcWXu6zidOc55nXjZG0GT50FDfpSqVglw5AwmN8XKn4BvcY3pxrSoclmkVpjMPCX5Lmv2v688aP+z/j9O69LV1B1af3Kyfv1Kquav3gnd84/u+1rPTn0MYh3ixRYH49TY2cOdUjBHHixF+jHqncBN/PUAL/UOV9xdNMA/SKGApIAdJJ44PQ9stqy/FlDS1ijPZu3mnbgSdzKDLWyKCBroSDE8inB971tEYGFWGO6HR oms@host.domain.tld
