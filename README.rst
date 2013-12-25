@@ -4,43 +4,100 @@ OMS-Kickstart
 
 Kickstart OMS - to the cloud we go!
 
+This repository contains scripts and configuration files to kickstart a new host
+with arbitrary bootstrapping and system provisioning.
+
+The configuration included will kickstart the bootstrap process used in the Open
+Mustard Seed project, but the kickstart framework will accept an arbitrary
+concept of bootstrapping as expressed through Salt States.
+
+In other words: the tools included in this repository will enable you to easily
+run arbitrary Salt States and Modules to provision a new (Ubuntu) host.
+
+
+Utilities Available
+-------------------
+
+``kickstart-oms.py``: The primary script for this whole kickstart process, acting
+as the execution framework to setup the Host as a salt-minion for use in
+controlling the Host through salt. Arbitrary configuration may be provided through
+simple YAML files (one or more). Both Salt state definitions as well as Salt
+pillar configuration dictionaries may be included in either the YAML config
+provided, in one or more git repositories, or both. Wow!
+
+``kickstart-kickstart.sh``: Helper script to ease kickstarting ``kickstart-oms.py``
+on a new host, via SSH. Eg, from a separate development host, this script can be
+used to automate the few (minor) manual steps to setup SSH keys, upload the
+scripts and config files needed, etc.
+
+``kick-tmux.sh``: Helper script to ease running the kickstart python script in a
+tmux session. this will first try to kill a session with the name ``kickstart``,
+then create a new session with this name, create a new window and execute the
+``run-kickstart.sh`` script.
+
+``run-kickstart.sh``: Helper script to wrap up running ``kickstart-oms.py`` with
+all the arguments you desire (simplify the setup and prevents tmux from yelling
+at us).
+
+
+Initial Setup
+-------------
+
+If on a Unix-like OS (ie NOT Windows), getting started is easy. If on Windows,
+you might want to get a Unix-like OS on a VM and work from there. Though, if the
+host you will kickstart *is* going to be that system away from Windows, upload
+the oms-kickstart repo to that host.
+
+* Download the oms-kickstart repository to your local development system
+* create SSH keypair with ``ssh-keygen -f oms-kickstart/config/keys``, and
+  ensure the public key is associated with your git account if you need it. If
+  deploying OMS without modification, you will need to do this for your github
+  account.
+* upload the scripts, configs, and SSH keypair to the host you will kickstart,
+  or see the helper scripts detailed later in this document.
+
+
+kickstart-oms.py
+----------------
+
+This is the primary script to use in the kickstart process, everything else is
+just a helper.
+
 
 intended use
-------------
-
-even with its flaws, this is some serious awesome!
+~~~~~~~~~~~~
 
 overall, this script completes four primary tasks:
 
 1) install and configure salt-minion on the host
-2) run state.high to apply some initial states
-3) run state.highstate to apply more advanced states
+2) run ``state.high`` to apply some initial states (bootstrap to get more code)
+3) run ``state.highstate`` to apply more advanced states
 4) if specified, run additional salt modules/functions
 
 default config and state data is included in the script, so no external config
 is necessary and the script can run by itself.
 
-when run this way, kickstart-oms.py will apply a set of base states that install
-minimal packages needed to clone the oms-deploy repo and setup the host for a
-run of state.highstate.
+when run this way, ``kickstart-oms.py`` will apply a set of base states that
+install minimal packages needed to clone the oms-deploy repo and setup the host
+for a run of ``state.highstate``.
 
-state.highstate will update the system using the salt states and pillar
+``state.highstate`` will update the system using the salt states and pillar
 definitions from the oms-deploy repo.
 
 
 control flags
--------------
+~~~~~~~~~~~~~
 
-kickstart-oms.py may be run with the following flags:
+``kickstart-oms.py`` may be run with the following flags:
 
 -d  enables debug logging to share some helpful details
 -t  enables test (noop) mode, no actions will be taken
--H  runs state.highstate after the host is setup with the base states
+-H  runs ``state.highstate`` after the host is setup with the base states
 -h  prints help messages
 -c  will let you provide a list of YAML-formatted configs
 -l  specify logfile to write to, when in debug mode
 
-lastly, kickstart-oms.py will accept external configuration to override the
+lastly, ``kickstart-oms.py`` will accept external configuration to override the
 defaults embedded in the script. this is where we get super awesome, as we are
 free to..
 
@@ -49,17 +106,9 @@ free to..
 3) include a list of additional salt modules to execute
 
 thus.. this script may be used to kickstart a host with an arbitrary set of base
-states, then run state.highstate to apply a second round of updates, and
+states, then run ``state.highstate`` to apply a second round of updates, and
 finally, execute additionalallowing us to do pretty much anything we want with
 salt.
-
-
-how to use this script
-----------------------
-
-**at present, this script requires using the example.yaml external config
-that is included in the oms-kickstart repository.** this will change in the
-future, such that you may run the script completely on its own.
 
 
 requirements
@@ -68,8 +117,7 @@ requirements
 * run on Ubuntu 12.04 LTS - no other system is currently supported.
 * expects that the user has created an SSH key pair for use with cloning
   any git repositories, else git repos ought to be public.
-* run as root, or with ``sudo``, though running with ``sudo`` has not been
-  tested (let us know how it works for you!)
+* run as root, or with ``sudo``.
 * use tmux so you don't run into problems getting disconnected.
 
 
@@ -99,7 +147,7 @@ assuming you are starting with a new VM, and are in an instance of tmux..
 * create an ssh key with ssh-keygen, saved to ``~/.ssh/id_rsa``
 * add the pub key to your github account, or whereever the git repos are stored
 * copy `the kickstart script`_ and `the external config`_ to the VM
-* run the script with: ``python kickstart-oms.py -H -c example.yaml``
+* run the script with: ``python kickstart-oms.py -H -c config/example.yaml``
 * go grab a fresh beverage and/or entertain yourself for 10 minutes or so
 * once complete, the VM ought to be completely setup and ready for either
   additional webapp deployments or for you to start hacking away! you will find
@@ -259,6 +307,73 @@ kickstart-oms.py::
     # execute these salt modules after kickstart complete
     post_kick:
       - 'state.sls oms.admin'
+
+
+Kickstart-Kickstart
+-------------------
+
+Ensure you have an SSH keypair in ``oms-kickstart/config/keys/``, and capable of
+authenticating the git repositories checked out for you during deployment, before
+running the kickstart-kickstart scripts.
+
+Run the script, providing the ``user@host`` for SSH and the path to the home
+directory of the user on the remote host (no trailing slash):
+
+.. code::
+
+   oms% ./kickstart-kickstart.sh root@162.242.148.144 /root
+   ###  Operate on Remote Host: root@162.242.148.144
+   ###  $HOME for root@162.242.148.144 is: /root
+   The authenticity of host '162.242.148.144 (162.242.148.144)' can't be established.
+   ECDSA key fingerprint is 93:e7:27:45:a6:05:9c:ed:0c:25:b0:7c:54:4a:b2:8f.
+   Are you sure you want to continue connecting (yes/no)? yes
+   Warning: Permanently added '162.242.148.144' (ECDSA) to the list of known hosts.
+   root@162.242.148.144's password: 
+   ###  ensure local id_rsa.pub is in the remote user's ~/.ssh/authorized_keys
+   root@162.242.148.144's password: 
+   id_rsa.pub
+   
+   sent 388 bytes  received 31 bytes  119.71 bytes/sec
+   total size is 381  speedup is 0.91
+   ###  upload kickstart scripts and configs
+   sending incremental file list
+   kick-tmux.sh
+   kickstart-oms.py
+   run-kickstart.sh
+   config/
+   config/.pillar.yaml.swp
+   config/embedded.yaml
+   config/example.yaml
+   config/latest_dev.yaml
+   config/release.yaml
+   config/keys/
+   config/keys/README
+   config/keys/id_rsa
+   config/keys/id_rsa.pub
+   config/pillar/
+   config/pillar/master.yaml
+   config/pillar/qa-develop.yaml
+   
+   sent 16930 bytes  received 271 bytes  11467.33 bytes/sec
+   total size is 55267  speedup is 3.21
+   ###  upload SSH keys
+   sending incremental file list
+   id_rsa
+   id_rsa.pub
+   
+   sent 1758 bytes  received 50 bytes  1205.33 bytes/sec
+   total size is 2060  speedup is 1.14
+   ready to run kickstart! shall we continue? y
+   ### in-case there is an open tmux session, try to kill it
+   ### this may error out, but that is ok
+   failed to connect to server: No such file or directory
+   ### starting a new tmux settion, name it kickstart
+   ### creating a new window in the session and run kickstart
+
+
+This will setup everything ``kickstart-oms.py`` needs to run on the remote host,
+and will initiate running the script in a tmux session (it basically does what
+is described in the previous section about using the kickstart script)..
 
 
 future intentions
