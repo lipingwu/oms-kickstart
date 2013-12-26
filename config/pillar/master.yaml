@@ -7,6 +7,12 @@ pillar:
     source_hash: md5=e98dfbfa17be1ff8f1e091319dfca4d8
     compile_me: /root/src/opensmtpd-5.3p1
   oms:
+    deploy_defaults:
+      hostname: localhost
+      oidc_host: localhost
+      vhost_base_url: http:/localhost/
+      oidc_base_url: http://localhost/idoic
+      ssl_enabled: False
     user: root
     group: root
     home: /var/oms
