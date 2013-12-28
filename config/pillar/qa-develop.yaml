@@ -36,11 +36,20 @@ pillar:
       oms-core:
         url: git@github.com:IDCubed/oms-core.git
         rev: qa-develop
+      oms-vrc:
+        url: git@github.com:IDCubed/oms-vrc.git
+        rev: qa-develop
       oms-ui:
         url: git@github.com:IDCubed/oms-ui.git
         rev: qa-develop
       oms-experimental:
         url: git@github.com:IDCubed/oms-experimental.git
+        rev: qa-develop
+      oms-salt-core:
+        url: git@github.com:IDCubed/oms-salt-core.git
+        rev: qa-develop
+      oms-salt-hosting:
+        url: git@github.com:IDCubed/oms-salt-hosting.git
         rev: qa-develop
       oms-happathon:
         url: git@github.com:IDCubed/oms-happathon.git
