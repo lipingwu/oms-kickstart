@@ -1,10 +1,10 @@
 repos:
   states:
     oms-deploy:
-      url: git@github.com:IDCubed/oms-deploy.git
-      rev: qa-develop
+      url: git@github.com:IDCubed/oms-salt-core.git
+      rev: legacy
       # specifies the directory within the repo (where to find states)
-      copy_path: salt/states
+      #copy_path: salt/states
 
 minion_config:
     path: /etc/salt/minion
