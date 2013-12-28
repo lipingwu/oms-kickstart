@@ -4,6 +4,18 @@ pillar:
   #system_fqdn: host.domain.tld
   # this key is required, by may be edited
   message_do_not_modify: "### This configuration is managed by OMS Systems Automation with SaltStack ###"
+  # list of packages to install before much else is done
+  base_packages:
+    - build-essential
+    - tmux
+    - vim
+    - git
+    - htop
+    - wget
+    - curl
+    - python-dev
+    - python-setuptools
+    - python-pip
   # controls the details of installing OpenSMTPd
   smtpd:
     target: /root/src/opensmtpd-5.3-portable.tar.gz
