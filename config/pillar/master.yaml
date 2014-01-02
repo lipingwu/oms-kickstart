@@ -10,7 +10,7 @@ pillar:
     deploy_defaults:
       hostname: localhost
       oidc_host: localhost
-      vhost_base_url: http:/localhost/
+      vhost_base_url: http://localhost/
       oidc_base_url: http://localhost/idoic
       ssl_enabled: False
     user: root
