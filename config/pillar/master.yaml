@@ -42,8 +42,8 @@ pillar:
       oms-experimental:
         url: git@github.com:IDCubed/oms-experimental.git
         rev: master
-      oms-happathon:
-        url: git@github.com:IDCubed/oms-happathon.git
+      oms-inside:
+        url: git@github.com:IDCubed/oms-inside.git
         rev: master
       python-mitreid:
         url: git@github.com:IDCubed/python-mitreid.git

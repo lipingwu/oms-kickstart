@@ -51,9 +51,9 @@ pillar:
       oms-salt-hosting:
         url: git@github.com:IDCubed/oms-salt-hosting.git
         rev: qa-develop
-      oms-happathon:
-        url: git@github.com:IDCubed/oms-happathon.git
-        rev: master
+      oms-inside:
+        url: git@github.com:IDCubed/oms-inside.git
+        rev: qa-develop
       python-mitreid:
         url: git@github.com:IDCubed/python-mitreid.git
         rev: master
