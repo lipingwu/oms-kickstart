@@ -12,7 +12,7 @@ pillar:
       oidc_host: localhost
       vhost_base_url: http://localhost/
       oidc_base_url: http://localhost/idoic
-      ssl_enabled: False
+      ssl_setup: False
     user: root
     group: root
     home: /var/oms
