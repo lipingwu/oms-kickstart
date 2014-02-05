@@ -11,7 +11,7 @@ pillar:
       hostname: localhost
       oidc_host: localhost
       vhost_base_url: http://localhost/
-      oidc_base_url: http://localhost/idoic
+      oidc_base_url: http://localhost/oidc
       ssl_setup: False
     user: root
     group: root
@@ -30,7 +30,7 @@ pillar:
       oms-kickstart:
         url: git@github.com:IDCubed/oms-kickstart.git
         rev: master
-      oidc:
+      oms-oidc:
         url: git@github.com:IDCubed/oms-oidc.git
         rev: master
       oms-core:
@@ -45,8 +45,11 @@ pillar:
       oms-inside:
         url: git@github.com:IDCubed/oms-inside.git
         rev: master
-      python-mitreid:
-        url: git@github.com:IDCubed/python-mitreid.git
+      python-oidc:
+        url: git@github.com:IDCubed/python-oidc.git
+        rev: master
+      oms-salt-core:
+        url: git@github.com:IDCubed/oms-salt-core.git
         rev: master
       salt-common:
         url: git@github.com:IDCubed/salt-common.git

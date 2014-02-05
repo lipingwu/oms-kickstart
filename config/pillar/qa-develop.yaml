@@ -11,7 +11,7 @@ pillar:
       hostname: localhost
       oidc_host: localhost
       vhost_base_url: http://localhost/
-      oidc_base_url: http://localhost/idoic
+      oidc_base_url: http://localhost/oidc
       ssl_setup: False
     user: root
     group: root
@@ -30,7 +30,7 @@ pillar:
       oms-kickstart:
         url: git@github.com:IDCubed/oms-kickstart.git
         rev: qa-develop
-      oidc:
+      oms-oidc:
         url: git@github.com:IDCubed/oms-oidc.git
         rev: qa-develop
       oms-core:
@@ -54,16 +54,16 @@ pillar:
       oms-inside:
         url: git@github.com:IDCubed/oms-inside.git
         rev: qa-develop
-      python-mitreid:
-        url: git@github.com:IDCubed/python-mitreid.git
-        rev: master
+      python-oidc:
+        url: git@github.com:IDCubed/python-oidc.git
+        rev: qa-develop
       salt-common:
         url: git@github.com:IDCubed/salt-common.git
-        rev: master
+        rev: qa-develop
       salt-non-common:
         url: git@github.com:IDCubed/salt-non-common.git
-        rev: master
+        rev: qa-develop
       inventory:
         url: git@github.com:IDCubed/inventory.git
-        rev: master
+        rev: qa-develop
 # end embedded pillar config
