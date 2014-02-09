@@ -344,7 +344,7 @@ directory of the user on the remote host (no trailing slash):
    config/.pillar.yaml.swp
    config/embedded.yaml
    config/example.yaml
-   config/latest_dev.yaml
+   config/qa-develop.yaml
    config/release.yaml
    config/keys/
    config/keys/README
