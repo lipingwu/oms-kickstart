@@ -1,22 +1,30 @@
 # begin embedded pillar config
 pillar:
+  # use the following key to set a specific hostname
+  #system_fqdn: host.domain.tld
   message_do_not_modify: "### This configuration is managed by OMS Systems Automation with SaltStack ###"
+  # controls the details of installing OpenSMTPd
   smtpd:
     target: /root/src/opensmtpd-5.3-portable.tar.gz
     source: http://www.opensmtpd.org/archives/opensmtpd-5.3p1.tar.gz
     source_hash: md5=e98dfbfa17be1ff8f1e091319dfca4d8
     compile_me: /root/src/opensmtpd-5.3p1
+  # some initial configuration for OMS' automation tools
   oms:
+    # default values for deploy.conf
     deploy_defaults:
       hostname: localhost
       oidc_host: localhost
       vhost_base_url: http://localhost/
       oidc_base_url: http://localhost/oidc
       ssl_setup: False
+    # OMS user, group, and important directories
     user: root
     group: root
     home: /var/oms
     src: /var/oms/src
+    # git repos to checkout enmasse, clone to oms:src pillar key
+    # the default is to include the entire OMS source code
     repos:
       oms-docs:
         url: git@github.com:IDCubed/oms-docs.git

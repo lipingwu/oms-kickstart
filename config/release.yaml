@@ -1,5 +1,8 @@
 repos:
+  # dictionary of git repos to checkout and rsync to salt's file_roots
   states:
+    # this 'release' config, currently v0.8.4, is based on the salt states/pillar
+    # from the oms-deploy repo. newer releases are using oms-salt-core instead
     oms-deploy:
       url: git@github.com:IDCubed/oms-deploy.git
       rev: master
@@ -11,8 +14,11 @@ repos:
       rev: master
       copy_path: salt/pillar
 
+# the initial config seeded into salt-minion
 minion_config:
+    # where to write the file
     path: /etc/salt/minion
+    # the actual config, as YAML
     contents:
       master: 127.0.0.1
       file_roots:
@@ -25,6 +31,7 @@ minion_config:
 
 # base states applied after minion is installed
 kickstart_state:
+  # pkg needed for the initial and generic kickstart process
   base_packages:
     pkg:
       - latest
@@ -32,6 +39,7 @@ kickstart_state:
           - git
           - rsync
           - openssh-client
+  # we tweak the SSH client config to simplify git checkouts over SSH with salt
   ssh_config:
     file:
       - managed
@@ -42,11 +50,13 @@ kickstart_state:
           UserKnownHostsFile=/dev/null
       - require:
           - pkg: base_packages
+  # where to install salt-minion configs/etc to
   install_to:
     file:
       - directory
       - name: /etc/salt
       - makedirs: True
+  # salt states will be rsync'd here
   salt_minion_files_roots:
     file:
       - directory
@@ -55,6 +65,7 @@ kickstart_state:
       - clean: True
       - require:
           - file: install_to
+  # embedded pillar and pillar from git will be written here
   salt_minion_pillar_roots:
     file:
       - directory
@@ -72,7 +83,7 @@ requirements:
   - file: salt_minion_files_roots
   - file: salt_minion_pillar_roots
 
-# execute these salt modules after kickstart complete
+# execute these salt modules.functions after kickstart completes
 post_kick:
   - 'state.sls oms.admin'
   - 'state.highstate'
