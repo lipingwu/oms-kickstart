@@ -5,9 +5,14 @@ repos:
     oms-salt-core:
       url: git@github.com:IDCubed/oms-salt-core.git
       # use this branch until the current deployment refactor is complete
-      rev: legacy
+      rev: qa-develop
       # specifies the directory within the repo (where to find states)
       #copy_path: salt/states
+    # list multiple repos and they will be rsync'd to the salt files_root
+    oms-salt-tcf:
+      url: git@github.com:IDCubed/oms-salt-tcf.git
+      rev: qa-develop
+
 
 # the initial config seeded into salt-minion
 minion_config:
