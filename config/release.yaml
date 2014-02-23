@@ -1,18 +1,22 @@
 repos:
   # dictionary of git repos to checkout and rsync to salt's file_roots
   states:
-    # this 'release' config, currently v0.8.4, is based on the salt states/pillar
-    # from the oms-deploy repo. newer releases are using oms-salt-core instead
-    oms-deploy:
-      url: git@github.com:IDCubed/oms-deploy.git
-      rev: master
+    # starting with v0.8.5, core salt states are in oms-salt-core
+    oms-salt-core:
+      url: git@github.com:IDCubed/oms-salt-core.git
+      # use this branch until the current deployment refactor is complete
+      rev: qa-develop
       # specifies the directory within the repo (where to find states)
-      copy_path: salt/states
-  pillar:
-    oms-deploy-pillar:
-      url: git@github.com:IDCubed/oms-deploy.git
-      rev: master
-      copy_path: salt/pillar
+      #copy_path: salt/states
+    # list multiple repos and they will be rsync'd to the salt files_root
+    oms-salt-tcf:
+      url: git@github.com:IDCubed/oms-salt-tcf.git
+      rev: qa-develop
+# pillar:
+#   oms-deploy-pillar:
+#     url: git@github.com:IDCubed/oms-deploy.git
+#     rev: master
+#     copy_path: salt/pillar
 
 # the initial config seeded into salt-minion
 minion_config:

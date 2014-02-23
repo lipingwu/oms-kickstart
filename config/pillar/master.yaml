@@ -60,6 +60,12 @@ pillar:
       oms-salt-core:
         url: git@github.com:IDCubed/oms-salt-core.git
         rev: master
+      oms-salt-tcf:
+        url: git@github.com:IDCubed/oms-salt-tcf.git
+        rev: master
+      oms-salt-hosting:
+        url: git@github.com:IDCubed/oms-salt-hosting.git
+        rev: master
       salt-common:
         url: git@github.com:IDCubed/salt-common.git
         rev: master
