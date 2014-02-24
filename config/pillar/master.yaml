@@ -16,6 +16,12 @@ pillar:
     - python-dev
     - python-setuptools
     - python-pip
+  # reclass helps keep us sane
+  reclass:
+    localhost:
+      # seed reclass' equivalent of salt master tops for this host
+      classes:
+        - fullstack
   # controls the details of installing OpenSMTPd
   smtpd:
     target: /root/src/opensmtpd-5.3-portable.tar.gz
