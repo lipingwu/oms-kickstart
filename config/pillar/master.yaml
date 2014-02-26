@@ -22,12 +22,6 @@ pillar:
       # seed reclass' equivalent of salt master tops for this host
       classes:
         - fullstack
-  # controls the details of installing OpenSMTPd
-  smtpd:
-    target: /root/src/opensmtpd-5.3-portable.tar.gz
-    source: http://www.opensmtpd.org/archives/opensmtpd-5.3p1.tar.gz
-    source_hash: md5=e98dfbfa17be1ff8f1e091319dfca4d8
-    compile_me: /root/src/opensmtpd-5.3p1
   # some initial configuration for OMS' automation tools
   oms:
     # default values for deploy.conf
