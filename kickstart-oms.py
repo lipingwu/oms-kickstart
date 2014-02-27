@@ -145,6 +145,8 @@ STATES_REPOS = {
     }
 }
 
+# set the default version (of salt) to install. options are: 0.17, 0.16
+DEFAULT_SALT_VERSION = '0.17'
 # saltstate default is /srv/ - return to sane default
 INSTALL_DIRECTORY = os.path.join('/' ,'etc', 'salt')
 # install states here
@@ -243,6 +245,7 @@ DEFAULT_CONFIG = {
         'repos': {
             'states': STATES_REPOS,
         },
+        'salt_version': DEFAULT_SALT_VERSION,
         'minion_config': MINION_CONFIG,
         'kickstart_state': BASE_STATES,
         'requirements': BASE_REQUIREMENTS,
@@ -533,20 +536,21 @@ def add_pkg_repository(ppa,
         subprocess.check_call(cmd)
 
 
-def add_saltinwound_pkgrepo(url=None,
-                            test=False):
+def add_saltstack_apt_key(key_id='0E27C0A6',
+                          test=False):
     '''
-    add unofficial pkgrepo from saltinwound.org - so we can get older versions
-    of salt packages
+    use ``apt-key`` to add the apt GPG key specified by ``key_id``, which defaults
+    to saltstack's ``0E27C0A6``.
+
+    .. note::
+
+       It is not yet possible to specify the ``key_id`` via the kickstart YAML
+       config, but we will make this possible in the future.
 
     '''
-    codename = distro_codename()
-    salt_src = ('/etc/apt/sources.list.d/saltstack-salt-%s.list' % codename)
     if not test:
-        with open(salt_src, 'w') as apt_source:
-            apt_source.write('deb %s %s main' % (url, codename))
         subprocess.check_call(('apt-key', 'adv', '--recv-keys', '--keyserver',
-                               'keyserver.ubuntu.com', '0E27C0A6'))
+                               'keyserver.ubuntu.com', key_id))
 
 
 def install_package(package,
@@ -564,12 +568,11 @@ def install_package(package,
         subprocess.check_call(cmd)
 
 
-def install_salt_minion(version='0.16.4',
+def install_salt_minion(version=DEFAULT_SALT_VERSION,
                         test=False):
     '''
-    Install salt-minion using saltstack Ubuntu PPA for the depenedencies, and
-    an unofficial package repo available at archive.robotinfra.com to provide
-    the ability to install previous (stable) versions of salt packages.
+    Setup the ubuntu PPA based on the version specified, then install the
+    salt-minion package.
 
     If ``test`` is True, run in noop mode
 
@@ -578,9 +581,14 @@ def install_salt_minion(version='0.16.4',
     update_apt(test=test)
     logger.info('Install salt-minion package..')
     install_package('python-software-properties', test=test)
-    add_pkg_repository('ppa:saltstack/salt', test=test)
-    unofficial_url = ('http://archive.robotinfra.com/mirror/salt/%s/' % version)
-    add_saltinwound_pkgrepo(unofficial_url)
+    add_saltstack_apt_key(test=test)
+    if version == '0.16':
+        ppa = 'ppa:saltstack/salt16'
+    elif version == '0.17':
+        ppa = 'ppa:saltstack/salt'
+    else:
+        ppa = 'ppa:saltstack/salt'
+    add_pkg_repository(ppa, test=test)
     update_apt(test=test)
     install_package('salt-minion', test=test)
 
@@ -755,6 +763,7 @@ def main():
         print '%s does not support %s' % (SCRIPT_NAME, distro)
         sys.exit(1)
 
+    # for now, set version by the default defined in the script, update later
     install_salt_minion(test=args.test)
     # as YAML can only be assumed to be importable after Salt minion is
     # installed (PyYAML is a salt dependency), we load YAML configs after
