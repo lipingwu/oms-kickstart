@@ -20,14 +20,25 @@ minion_config:
     path: /etc/salt/minion
     # the actual config, as YAML
     contents:
+      # override the default (salt-minion will use hostname)
+      # if deploying to a docker container, this must be set to maintain sanity
+      #id: docker
+      # if there were a master, look here
       master: 127.0.0.1
+      # .sls file root path for salt states/modules/etc
       file_roots:
         base:
           - /etc/salt/states
+      # .sls file root path for salt pillar
       pillar_roots:
         base:
           - /etc/salt/pillar
+      # setup salt-minion in masterless mode
       file_client: local
+      # additional includes to pull in dynamically
+      include:
+          - minion.d/*
+
 
 # base states applied after minion is installed
 kickstart_state:
