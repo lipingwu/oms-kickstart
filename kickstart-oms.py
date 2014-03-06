@@ -823,6 +823,8 @@ def main():
         logger.debug('running state.high to apply base states')
         check_state_errors(salt_client('state.high', data))
         # we've applied the base states, sync modules/states so minion is current
+        # get a 'new' salt client to reset after state
+        salt_client = get_salt_client()
         salt_client('saltutil.sync_all')
         # run state.highstate, if the user has told us to. if the base states
         # setup the host with more states, or a top.sls, this will effectively
@@ -834,6 +836,8 @@ def main():
         if config.has_key('post_kick'):
             for run_me in config['post_kick']:
                 logger.debug('calling post kickstart function %s' % run_me)
+                # get a 'new' salt client to reset after highstate
+                salt_client = get_salt_client()
                 # rework input: salt_client(func, [arg1, arg2])
                 f = run_me.split(' ')
                 func = [f[0], f[1:]]
