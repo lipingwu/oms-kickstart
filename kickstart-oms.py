@@ -585,7 +585,7 @@ def install_salt_minion(version=DEFAULT_SALT_VERSION,
     if version == '0.16':
         ppa = 'ppa:saltstack/salt16'
     elif version == '0.17':
-        ppa = 'ppa:saltstack/salt'
+        ppa = 'ppa:saltstack/salt17'
     else:
         ppa = 'ppa:saltstack/salt'
     add_pkg_repository(ppa, test=test)
