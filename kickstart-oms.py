@@ -129,11 +129,15 @@ import subprocess
 from socket import gethostname
 
 
-# enable and setup logging
+# setup and enable logging
+DEFAULT_LOG_FORMAT = '%(asctime)s [%(process)d] %(message)s'
+logging.basicConfig(level=logging.INFO,
+                    stream=sys.stderr,
+                    format=DEFAULT_LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
 # some defaults for this script
-SCRIPT_NAME = 'kickstart-oms.py'
+SCRIPT_NAME = 'kickstart-oms'
 
 SUPPORTED_DISTROS = [ 'precise', ]
 
@@ -429,17 +433,6 @@ class GitRepository(object):
         return output
 
 
-def add_logfile_handler(logfile):
-    '''
-    update logging configuration to write to a file, specified by ``logfile``
-
-    '''
-    handler= logging.FileHandler(logfile)
-    format = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-    handler.setFormatter(format)
-    logger.addHandler(handler)
-
-
 def process_args():
     '''
     process command line arguments passed to the script
@@ -469,12 +462,44 @@ def process_args():
                         default=False,
                         help='run state.highstate to apply states from external repo')
 
-    parser.add_argument('-l', '--logfile',
+    parser.add_argument('-l', '--log-to-file',
                         action='store',
                         default=os.path.join('{0}.{1}'.format(SCRIPT_NAME, 'log')),
                         help='specify the file to log to, when in debug mode')
 
+    parser.add_argument(      '--log-level',
+                        action='store',
+                        default=logging.INFO,
+                        help='specify the verbosity level of log output')
     return parser.parse_args()
+
+
+def add_logfile_handler(logfile):
+    '''
+    update logging configuration to write to a file, specified by ``logfile``
+
+    '''
+    handler= logging.FileHandler(logfile)
+    format = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    handler.setFormatter(format)
+    logger.addHandler(handler)
+
+
+def extend_logger(args=None):
+    '''
+    extend the default logger:
+     * if in debug mode, set log-level to ``logging.DEBUG``
+     * update the log-level (verbosity of log output)
+     * if specified, write the log to a file.
+
+    '''
+    if args.debug:
+        args.log_level = logging.DEBUG
+    # update the log verbosity of logger already setup
+    logger.setLevel(args.log_level)
+    # if specified, log to file
+    if args.log_to_file:
+        add_logfile_handler(args.log_to_file)
 
 
 def check_state_errors(results):
@@ -501,6 +526,18 @@ def check_state_errors(results):
             errors.append('Invalid output %s' % str(results))
     if errors:
         print os.linesep.join(errors)
+        sys.exit(1)
+
+
+def check_distro():
+    '''
+    check OS/distribution of the host, error out if not supported
+
+    '''
+    distro = distro_codename()
+    logger.debug(('OS Distro: %s' % distro))
+    if distro not in SUPPORTED_DISTROS:
+        print '%s does not support %s' % (SCRIPT_NAME, distro)
         sys.exit(1)
 
 
@@ -605,7 +642,7 @@ def configure_salt_minion(path,
 
     '''
     import yaml
-    logging.info('Updating config for salt-minion')
+    logger.info('Updating config for salt-minion')
     logger.debug(('contents: %s' % json.dumps(config, indent=4)))
     if not test:
         with open(path, 'w') as config_file:
@@ -737,31 +774,18 @@ def main():
     let the real work begin!
 
     '''
+    # collect arguments from executing the script
     args = process_args()
-
-    # set log level and setup logging
-    log_level = logging.INFO
-    if args.debug:
-        log_level = logging.DEBUG
-
-    logging.basicConfig(level=log_level,
-                        stream=sys.stderr,
-                        format='%(asctime)s [%(process)d] %(message)s')
-    # write to a logfile, when in debug mode
-    if args.debug:
-        add_logfile_handler(args.logfile)
-
+    # update the default logger already setup
+    extend_logger(args)
+    # dump those args to log, when in debug mode
     logger.debug(('Script args: %s' % args))
 
     if args.test:
-        logging.info('Test mode enabled, no actions will be taken')
+        logger.info('Test mode enabled, no actions will be taken')
 
     # check distribution, error out if not supported
-    distro = distro_codename()
-    logger.debug(('OS Distro: %s' % distro))
-    if distro not in SUPPORTED_DISTROS:
-        print '%s does not support %s' % (SCRIPT_NAME, distro)
-        sys.exit(1)
+    check_distro()
 
     # for now, set version by the default defined in the script, update later
     install_salt_minion(test=args.test)
