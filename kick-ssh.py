@@ -46,11 +46,11 @@ authorized_keys = os.path.join(dot_ssh, 'authorized_keys')
 
 # create .ssh if it doesn't exist
 if not os.path.exists(dot_ssh):
-   os.mkdir(dot_ssh, 0700)
+    os.mkdir(dot_ssh, 0700)
 
 # ensure SOMETHING is there for an authorized_keys, if even empty
 if not os.path.exists(authorized_keys):
-   subprocess.check_call(('touch', authorized_keys)) 
+    subprocess.check_call(('touch', authorized_keys))
 
 # reset group/world permissions for .ssh/*
 subprocess.check_call(('chmod', '-R', 'g-rxw', dot_ssh))

@@ -119,7 +119,6 @@ ssh_key: |
 '''
 import os
 import sys
-import pwd
 import json
 import shutil
 import logging
@@ -134,7 +133,7 @@ DEFAULT_LOG_FORMAT = '%(asctime)s [%(process)d] %(message)s'
 logging.basicConfig(level=logging.INFO,
                     stream=sys.stderr,
                     format=DEFAULT_LOG_FORMAT)
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 # some defaults for this script
 SCRIPT_NAME = 'kickstart-oms'
@@ -152,7 +151,7 @@ STATES_REPOS = {
 # set the default version (of salt) to install. options are: 0.17, 0.16
 DEFAULT_SALT_VERSION = '0.17'
 # saltstate default is /srv/ - return to sane default
-INSTALL_DIRECTORY = os.path.join('/' ,'etc', 'salt')
+INSTALL_DIRECTORY = os.path.join('/', 'etc', 'salt')
 # install states here
 STATES_ROOT = os.path.join(INSTALL_DIRECTORY, 'states')
 # install pillar here - not implemented
@@ -259,7 +258,7 @@ DEFAULT_CONFIG = {
 
 # running this script will create git repos in /tmp for temporary use, so we
 # need to track what we create then remove them.
-tmp_paths_to_purge = []
+_tmp_paths_to_purge = []
 
 
 class SSHKey(object):
@@ -486,10 +485,10 @@ def add_logfile_handler(logfile):
     update logging configuration to write to a file, specified by ``logfile``
 
     '''
-    handler= logging.FileHandler(logfile)
+    handler = logging.FileHandler(logfile)
     format = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     handler.setFormatter(format)
-    logger.addHandler(handler)
+    _logger.addHandler(handler)
 
 
 def extend_logger(args=None):
@@ -503,7 +502,7 @@ def extend_logger(args=None):
     if args.debug:
         args.log_level = logging.DEBUG
     # update the log verbosity of logger already setup
-    logger.setLevel(args.log_level)
+    _logger.setLevel(args.log_level)
     # if specified, log to file
     if args.log_to_file:
         add_logfile_handler(args.log_to_file)
@@ -542,7 +541,7 @@ def check_distro():
 
     '''
     distro = distro_codename()
-    logger.debug(('OS Distro: %s' % distro))
+    _logger.debug(('OS Distro: %s' % distro))
     if distro not in SUPPORTED_DISTROS:
         print '%s does not support %s' % (SCRIPT_NAME, distro)
         sys.exit(1)
@@ -563,7 +562,7 @@ def update_apt(test=False):
 
     '''
     cmd = ('apt-get', 'update')
-    logger.debug(('update apt with: %s' % (cmd,)))
+    _logger.debug(('update apt with: %s' % (cmd,)))
     if not test:
         subprocess.check_call(cmd)
 
@@ -575,7 +574,7 @@ def add_pkg_repository(ppa,
 
     '''
     cmd = ('apt-add-repository', '-y', ppa)
-    logger.debug(('Add package repository (%s) with %s' % (ppa, cmd)))
+    _logger.debug(('Add package repository (%s) with %s' % (ppa, cmd)))
     if not test:
         subprocess.check_call(cmd)
 
@@ -607,7 +606,7 @@ def install_package(package,
 
     '''
     cmd = ('apt-get', 'install', '-y', '--force-yes', package)
-    logger.debug('Install package %s, running: %s', package, ' '.join(cmd))
+    _logger.debug('Install package %s, running: %s', package, ' '.join(cmd))
     if not test:
         subprocess.check_call(cmd)
 
@@ -621,9 +620,9 @@ def install_salt_minion(version=DEFAULT_SALT_VERSION,
     If ``test`` is True, run in noop mode
 
     '''
-    logger.info('Update apt before we install anything')
+    _logger.info('Update apt before we install anything')
     update_apt(test=test)
-    logger.info('Install salt-minion package..')
+    _logger.info('Install salt-minion package..')
     install_package('python-software-properties', test=test)
     add_saltstack_apt_key(test=test)
     if version == '0.16':
@@ -635,6 +634,23 @@ def install_salt_minion(version=DEFAULT_SALT_VERSION,
     add_pkg_repository(ppa, test=test)
     update_apt(test=test)
     install_package('salt-minion', test=test)
+
+
+def process_configs(args):
+    '''
+    return the ``DEFAULT_CONFIG`` unless we have ``args.configs``, in which
+    case we will build a config from loading YAML files in ``args.configs``.
+
+    as YAML can only be assumed to be importable after Salt minion is
+    installed (PyYAML is a salt dependency), we load YAML configs after
+
+    '''
+    config = DEFAULT_CONFIG
+    if args.configs:
+        config = load_yaml_configs(args.configs)
+        _logger.debug(('imported YAML configs from: %s' % args.configs))
+        _logger.debug(('config:\n%s' % json.dumps(config, indent=4)))
+    return config
 
 
 def configure_salt_minion(path,
@@ -649,8 +665,8 @@ def configure_salt_minion(path,
 
     '''
     import yaml
-    logger.info('Updating config for salt-minion')
-    logger.debug(('contents: %s' % json.dumps(config, indent=4)))
+    _logger.info('Updating config for salt-minion')
+    _logger.debug(('contents: %s' % json.dumps(config, indent=4)))
     if not test:
         with open(path, 'w') as config_file:
             yaml.safe_dump(config, config_file)
@@ -672,7 +688,7 @@ def process_repos(repos=None):
 
 
 
-def update_kickstart_state(states_repos,
+def merge_kickstart_states(states_repos,
                            base_states={},
                            base_requirements=[],
                            pillar_repos=None,
@@ -705,7 +721,7 @@ def update_kickstart_state(states_repos,
         # create secure tmp directory for our work
         tmp_git = tempfile.mkdtemp()
         # save the path so we can delete it later
-        tmp_paths_to_purge.append(tmp_git)
+        _tmp_paths_to_purge.append(tmp_git)
         # update state tree with a few more states for this repo
         states.update(repo.get_states(clone_to=tmp_git,
                                       requirements=base_requirements,
@@ -716,7 +732,7 @@ def update_kickstart_state(states_repos,
             # create secure tmp directory for our work
             tmp_git = tempfile.mkdtemp()
             # save the path so we can delete it later
-            tmp_paths_to_purge.append(tmp_git)
+            _tmp_paths_to_purge.append(tmp_git)
             # update state tree with a few more states for this repo
             states.update(repo.get_states(clone_to=tmp_git,
                                           requirements=base_requirements,
@@ -732,6 +748,55 @@ def update_kickstart_state(states_repos,
         requirements.append(ssh_key.require)
 
     return states
+
+
+def compile_ignition_formula(args, config):
+    '''
+    provided ``args`` and ``config`` from kickstart, process the provided
+    state data to compile a formula suitable for ignition. get ready to BLAST OFF!
+
+    '''
+    # if there are repos for states/formula, create some states. error if missing
+    try:
+        states_repos_list = config['repos']['states']
+        _logger.debug(('state repos: %s' % states_repos_list))
+    except KeyError:
+        print 'Missing config key repos:states in %s' % config
+        sys.exit(1)
+    states_repos = process_repos(states_repos_list)
+    # there is likely a more concise way to express these 3 try/except blocks
+    # if there are repos for pillar, create some states
+    try:
+        pillar_repos = process_repos(config['repos']['pillar'])
+    except KeyError:
+        _logger.info('no pillar repo found in config, skipping')
+        pillar_repos = None
+    # try to retrieve a pillar dictionary embedded in the kickstart config
+    try:
+        pillar_config = PillarConfig(config['pillar'])
+    except KeyError:
+        _logger.info('no embedded pillar dictionary found in config, skipping.')
+        pillar_config = None
+    # try to retrieve a SSH key embedded in the kickstart config
+    try:
+        ssh_key = SSHKey(config['ssh_key'])
+    except KeyError:
+        _logger.info('Missing SSH key configuration, hope Git repo is public.')
+        ssh_key = None
+    # pull all this together to create the forumula
+    formula = merge_kickstart_states(states_repos,
+                                     config['kickstart_state'],
+                                     config['requirements'],
+                                     pillar_repos,
+                                     pillar_config,
+                                     ssh_key)
+    if args.debug:
+        # we need to be explicit about this import, and can't risk import before
+        # PyYAML is available.
+        import yaml
+        _logger.debug(('updated kickstart state (yaml):\n%s' % yaml.dump(formula,
+                                                                        indent=4)))
+    return formula
 
 
 def get_salt_client():
@@ -752,28 +817,28 @@ def get_salt_client():
 
 
 def load_yaml_configs(file_list):
-     '''
-     Create a dict of data from multiple YAML files.
+    '''
+    Create a dict of data from multiple YAML files.
 
-     Note that files are loaded in the order recieved, it is your responsibility
-     to ensure these files don't step on each other.
+    Note that files are loaded in the order recieved, it is your responsibility
+    to ensure these files don't step on each other.
 
-     '''
-     import yaml
-     output = {}
-     for config in file_list:
-         try:
-             with open(config) as yaml_file:
-                 try:
-                     data = yaml.safe_load(yaml_file)
-                     output.update(data)
-                     logger.debug(('contents of YAML config %s: %s' % (config, data)))
-                 except Exception, err:
-                     logger.error('Unable to parse contents of YAML file %s: %s',
-                                  config, err)
-         except IOError:
-             logger.error('Unable to open %s', config)
-     return output
+    '''
+    import yaml
+    output = {}
+    for config in file_list:
+        try:
+            with open(config) as yaml_file:
+                try:
+                    data = yaml.safe_load(yaml_file)
+                    output.update(data)
+                    _logger.debug(('contents of YAML config %s: %s' % (config, data)))
+                except Exception, err:
+                    _logger.error('Unable to parse contents of YAML file %s: %s',
+                                 config, err)
+        except IOError:
+            _logger.error('Unable to open %s', config)
+    return output
 
 
 def main():
@@ -786,77 +851,32 @@ def main():
     # update the default logger already setup
     extend_logger(args)
     # dump those args to log, when in debug mode
-    logger.debug(('Script args: %s' % args))
+    _logger.debug(('Script args: %s' % args))
 
     if args.test:
-        logger.info('Test mode enabled, no actions will be taken')
-
+        _logger.info('Test mode enabled, no actions will be taken')
     # check distribution, error out if not supported
     check_distro()
-
     # only install salt-minion if we're told to
     if args.skip_minion_install:
-        logger.debug('Skip installing salt-minion')
+        _logger.debug('Skip installing salt-minion')
     else:
         # for now, set version by the default defined in the script, update later
         install_salt_minion(test=args.test)
-
-    # as YAML can only be assumed to be importable after Salt minion is
-    # installed (PyYAML is a salt dependency), we load YAML configs after
-    config = DEFAULT_CONFIG
-    if args.configs:
-        config = load_yaml_configs(args.configs)
-        logger.debug(('imported YAML configs from: %s' % args.configs))
-        logger.debug(('config:\n%s' % json.dumps(config, indent=4)))
-
+    # process default (embedded) config and YAML config files from user
+    config = process_configs(args)
+    # update minion configuration
     configure_salt_minion(config['minion_config']['path'],
                           config['minion_config']['contents'],
                           test=args.test)
 
-    try:
-        states_repos_list = config['repos']['states']
-        logger.debug(('state repos: %s' % states_repos_list))
-    except KeyError:
-        print 'Missing config key repos:states in %s' % config
-        sys.exit(1)
-
-    states_repos = process_repos(states_repos_list)
-
-    # there is likely a more concise way to express these 3 try/except blocks
-    try:
-        pillar_repos = process_repos(config['repos']['pillar'])
-    except KeyError:
-        logger.info('no pillar repo found in config, skipping')
-        pillar_repos = None
-
-    try:
-        pillar_config = PillarConfig(config['pillar'])
-    except KeyError:
-        logger.info('Missing SSH key configuration, hope Git repo is public.')
-        pillar_config = None
-
-    try:
-        ssh_key = SSHKey(config['ssh_key'])
-    except KeyError:
-        logger.info('Missing SSH key configuration, hope Git repo is public.')
-        ssh_key = None
-
-    data = update_kickstart_state(states_repos,
-                                  config['kickstart_state'],
-                                  config['requirements'],
-                                  pillar_repos,
-                                  pillar_config,
-                                  ssh_key)
-    if args.debug:
-        import yaml
-        logger.debug(('updated kickstart state (yaml):\n%s' % yaml.dump(data,
-                                                                        indent=4)))
+    data = compile_ignition_formula(args, config)
 
     if not args.test:
-        logger.debug('loading salt client')
+        _logger.debug('loading salt client')
         salt_client = get_salt_client()
 
-        logger.debug('running state.high to apply base states')
+        _logger.debug('running state.high to apply base states')
         check_state_errors(salt_client('state.high', data))
         # we've applied the base states, sync modules/states so minion is current
         # get a 'new' salt client to reset after state
@@ -866,12 +886,12 @@ def main():
         # setup the host with more states, or a top.sls, this will effectively
         # apply those updates
         if args.highstate:
-            logger.debug('run state.highstate to apply states from external repo')
+            _logger.debug('run state.highstate to apply states from external repo')
             salt_client('state.highstate')
         # we're done with kickstart core, so run extra modules if specified
         if config.has_key('post_kick'):
             for run_me in config['post_kick']:
-                logger.debug('calling post kickstart function %s' % run_me)
+                _logger.debug('calling post kickstart function %s' % run_me)
                 # get a 'new' salt client to reset after highstate
                 salt_client = get_salt_client()
                 # rework input: salt_client(func, [arg1, arg2])
@@ -880,11 +900,11 @@ def main():
                 salt_client(*func)
         # remove all the temporary git repos we cloned.. but skip if in debug mode
         if not args.debug:
-            for repo in tmp_paths_to_purge:
-                logger.info(('remove temporary path: %s' % repo))
+            for repo in _tmp_paths_to_purge:
+                _logger.info(('remove temporary path: %s' % repo))
                 shutil.rmtree(repo)
     else:
-        logger.info('in test mode.. skipping state execution')
+        _logger.info('in test mode.. skipping state execution')
 
 
 if __name__ == '__main__':
