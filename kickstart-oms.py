@@ -460,7 +460,14 @@ def process_args():
     parser.add_argument('-H', '--highstate',
                         action='store_true',
                         default=False,
-                        help='run state.highstate to apply states from external repo')
+                        help='run state.highstate to apply states from external \
+                              repo')
+
+    parser.add_argument('-s', '--skip-minion-install',
+                        action='store_true',
+                        default=False,
+                        help='flad to enable/disable installing the salt-minion \
+                              package')
 
     parser.add_argument('-l', '--log-to-file',
                         action='store',
@@ -787,8 +794,13 @@ def main():
     # check distribution, error out if not supported
     check_distro()
 
-    # for now, set version by the default defined in the script, update later
-    install_salt_minion(test=args.test)
+    # only install salt-minion if we're told to
+    if args.skip_minion_install:
+        logger.debug('Skip installing salt-minion')
+    else:
+        # for now, set version by the default defined in the script, update later
+        install_salt_minion(test=args.test)
+
     # as YAML can only be assumed to be importable after Salt minion is
     # installed (PyYAML is a salt dependency), we load YAML configs after
     config = DEFAULT_CONFIG
