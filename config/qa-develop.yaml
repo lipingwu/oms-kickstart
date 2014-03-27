@@ -96,5 +96,9 @@ requirements:
 
 # execute these salt modules.functions after kickstart completes
 post_kick:
-  - 'state.sls oms.admin'
+  - 'state.sls reclass.update_tops'
+  - 'state.sls swap'
+# - 'cmd.run /root/mkswap.sh'
   - 'state.highstate'
+  - 'state.highstate'
+  - 'cmd.run oms'
