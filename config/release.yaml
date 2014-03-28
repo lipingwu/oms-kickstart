@@ -5,18 +5,14 @@ repos:
     oms-salt-core:
       url: git@github.com:IDCubed/oms-salt-core.git
       # use this branch until the current deployment refactor is complete
-      rev: qa-develop
+      rev: v0.8.5-rc
       # specifies the directory within the repo (where to find states)
       #copy_path: salt/states
     # list multiple repos and they will be rsync'd to the salt files_root
     oms-salt-tcf:
       url: git@github.com:IDCubed/oms-salt-tcf.git
-      rev: qa-develop
-# pillar:
-#   oms-deploy-pillar:
-#     url: git@github.com:IDCubed/oms-deploy.git
-#     rev: master
-#     copy_path: salt/pillar
+      rev: v0.8.5-rc
+
 
 # the initial config seeded into salt-minion
 minion_config:
@@ -100,5 +96,9 @@ requirements:
 
 # execute these salt modules.functions after kickstart completes
 post_kick:
-  - 'state.sls oms.admin'
+  - 'state.sls reclass.update_tops'
+  - 'state.sls swap'
+  - 'cmd.run /root/mkswap.sh'
   - 'state.highstate'
+  - 'state.highstate'
+  - 'cmd.run oms'
