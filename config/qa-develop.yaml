@@ -98,7 +98,7 @@ requirements:
 post_kick:
   - 'state.sls reclass.update_tops'
   - 'state.sls swap'
-# - 'cmd.run /root/mkswap.sh'
+  - 'cmd.run /root/mkswap.sh'
   - 'state.highstate'
   - 'state.highstate'
   - 'cmd.run oms'
