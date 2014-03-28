@@ -12,9 +12,7 @@ pillar:
     - htop
     - wget
     - curl
-    - python-dev
     - python-setuptools
-    - python-pip
   # reclass helps keep us sane
   reclass:
     localhost:
