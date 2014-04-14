@@ -35,11 +35,9 @@
         },
         {
             "type": "shell",
-            "execute_command": "echo '{{user `system_pass` }}' | sudo -E -S sh '{{ .Path }}'",
-            "inline": ["/home/{{user `system_user` }}/kickstart/base.sh",
-                       "/home/{{user `system_user` }}/kickstart/vbox_guest.sh",
-                       "cd /home/{{user `system_user` }}/kickstart && {{user `kickstart_cmd` }} {{ user `kickstart_opts` }}",
-                       "/home/{{user `system_user` }}/kickstart/cleanup.sh"]
+            "execute_command": "chmod +x {{ .Path }}; echo '{{user `system_pass` }}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+            "inline": ["cd /home/{{user `system_user` }}/kickstart && {{user `kickstart_cmd` }} {{ user `kickstart_opts` }}",
+                       "cd /home/{{user `system_user` }}/kickstart/cleanup/ && ./all.sh"]
         }
     ]
 }

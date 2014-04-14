@@ -36,5 +36,16 @@
                 ["modifyvm", "{{.Name}}", "--memory", "{{user `system_memory`}}"]
             ]
         }
+    ],
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "scripts": [
+                "uploads/kickstart/vbox_guest.sh",
+                "uploads/kickstart/cleanup/ubuntu.sh",
+                "uploads/kickstart/cleanup/network.sh"],
+            "execute_command": "chmod +x {{ .Path }}; echo '{{user `system_pass` }}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+        }
     ]
 }
