@@ -14,7 +14,7 @@
             "guest_os_type": "Ubuntu_64",
             "guest_additions_mode": "attach",
             "iso_url": "http://archive.ubuntu.com/ubuntu/dists/precise-updates/main/installer-amd64/current/images/netboot/mini.iso",
-            "iso_checksum": "2aff883e22e4a2f26ef6c10e2c97606e9728832361a3e6214fba7f637ed9a990",
+            "iso_checksum": "edae2868defdcb235aaa1de8c31e64442013269598e4d7504aa1b794e73ddfe5",
             "iso_checksum_type": "sha256",
             "http_directory" : "http_server/ubuntu/12.04/amd64/",
             "boot_command": [
