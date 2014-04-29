@@ -6,13 +6,13 @@ repos:
     oms-salt-core:
       url: git@github.com:IDCubed/oms-salt-core.git
       # use this branch until the current deployment refactor is complete
-      rev: v0.8.5-rc
+      rev: master
       # specifies the directory within the repo (where to find states)
       #copy_path: salt/states
     # list multiple repos and they will be rsync'd to the salt files_root
     oms-salt-tcf:
       url: git@github.com:IDCubed/oms-salt-tcf.git
-      rev: v0.8.5-rc
+      rev: master
 
 
 # the initial config seeded into salt-minion
@@ -148,7 +148,7 @@ pillar:
           # set this to override the default revision for OMS git source clone
           default_rev: '${oms:version}'
           # this version is written to /etc/oms.conf
-          version: v0.8.5-rc
+          version: master
           # default values for deploy.conf
           # you _MUST_ at the least, uncomment the next two lines, and update
           # the hostname, this should match the DNS entry for the host
