@@ -7,7 +7,7 @@
 *.swo
 *.db
 .idea
-docs/build
+_build
 node_modules
 packer_cache
 builds
