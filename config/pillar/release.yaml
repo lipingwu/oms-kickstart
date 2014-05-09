@@ -40,7 +40,7 @@ pillar:
           # set this to override the default revision for OMS git source clone
           default_rev: '${oms:version}'
           # this version is written to /etc/oms.conf
-          version: v0.8.5
+          version: v0.8.5.1
           # default values for deploy.conf
           # you _MUST_ at the least, uncomment the next two lines, and update
           # the hostname, this should match the DNS entry for the host
