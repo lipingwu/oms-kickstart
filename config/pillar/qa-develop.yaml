@@ -37,7 +37,8 @@ pillar:
         # system_fqdn: oms-dev
         # some initial configuration for OMS' automation tools
         oms:
-          # set this to override the default revision for OMS git source clone
+          # set this to override the default revision (master) for OMS git source
+          # clone. this is handy for dev/qa/rc/etc, but is not needed for release
           default_rev: '${oms:version}'
           # this version is written to /etc/oms.conf
           version: qa-develop
