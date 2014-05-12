@@ -5,6 +5,9 @@
 # NOTE: you are only required to uncomment the deploy_Defaults and hostname keys,
 #       updating the hostname to match the DNS entry used to access the host
 #
+# NOTE: be super careful with indentation, you will end up with cryptic errors
+#       if this is done incorrectly.
+#
 # begin embedded pillar config
 pillar:
   # use the following key to set a specific hostname
@@ -45,67 +48,67 @@ pillar:
           # default values for deploy.conf
           # you _MUST_ at the least, uncomment the next two lines, and update
           # the hostname, this should match the DNS entry for the host
-      #   deploy_defaults:
-      #      hostname: host.domain.tld
-      #      oidc_host: '${oms:deploy_defaults:hostname}'
-      #      vhost_base_url: 'http://${oms:deploy_defaults:hostname}/'
-      #      oidc_base_url: '${oms:deploy_defaults:vhost_base_url}oidc'
-      #      ssl_setup: False
-      #   # git repos to checkout enmasse, clone to oms:src pillar key
-      #   # the default is to include the entire OMS source code
-      #   repos:
-      #     oms-salt-hosting:
-      #       url: git@github.com:IDCubed/oms-salt-hosting.git
-      #       rev: legacy
-      #     oms-vrc:
-      #       url: git@github.com:IDCubed/oms-vrc.git
-      #       rev: master
-      #     oms-inside:
-      #       url: git@github.com:IDCubed/oms-inside.git
-      #       rev: qa-develop
-      #     python-oidc:
-      #       url: git@github.com:IDCubed/python-oidc.git
-      #       rev: qa-develop
-      #     salt-common:
-      #       url: git@github.com:IDCubed/salt-common.git
-      #       rev: qa-develop
-      #     salt-non-common:
-      #       url: git@github.com:IDCubed/salt-non-common.git
-      #       rev: qa-develop
-      #     inventory:
-      #       url: git@github.com:IDCubed/inventory.git
-      #       rev: qa-develop
-      #      oms-docs:
-      #        url: git@github.com:IDCubed/oms-docs.git
-      #        rev: qa-develop
-      #      oms-deploy:
-      #        url: git@github.com:IDCubed/oms-deploy.git
-      #        rev: qa-develop
-      #      oms-admin:
-      #        url: git@github.com:IDCubed/oms-admin.git
-      #        rev: qa-develop
-      #      oms-kickstart:
-      #        url: git@github.com:IDCubed/oms-kickstart.git
-      #        rev: qa-develop
-      #      oms-oidc:
-      #        url: git@github.com:IDCubed/oms-oidc.git
-      #        rev: qa-develop
-      #     oms-core:
-      #        url: git@github.com:IDCubed/oms-core.git
-      #        rev: qa-develop
-      #      oms-vrc:
-      #        url: git@github.com:IDCubed/oms-vrc.git
-      #        rev: qa-develop
-      #      oms-ui:
-      #        url: git@github.com:IDCubed/oms-ui.git
-      #        rev: qa-develop
-      #      oms-experimental:
-      #        url: git@github.com:IDCubed/oms-experimental.git
-      #        rev: qa-develop
-      #      oms-salt-core:
-      #        url: git@github.com:IDCubed/oms-salt-core.git
-      #        rev: qa-develop
-      #      oms-salt-tcf:
-      #        url: git@github.com:IDCubed/oms-salt-tcf.git
-      #        rev: qa-develop
+#         deploy_defaults:
+#            hostname: host.domain.tld
+#            oidc_host: '${oms:deploy_defaults:hostname}'
+#            vhost_base_url: 'http://${oms:deploy_defaults:hostname}/'
+#            oidc_base_url: '${oms:deploy_defaults:vhost_base_url}oidc'
+#            ssl_setup: False
+#         # git repos to checkout enmasse, clone to oms:src pillar key
+#         # the default is to include the entire OMS source code
+#         repos:
+#           oms-salt-hosting:
+#             url: git@github.com:IDCubed/oms-salt-hosting.git
+#             rev: legacy
+#           oms-vrc:
+#             url: git@github.com:IDCubed/oms-vrc.git
+#             rev: master
+#           oms-inside:
+#             url: git@github.com:IDCubed/oms-inside.git
+#             rev: qa-develop
+#           python-oidc:
+#             url: git@github.com:IDCubed/python-oidc.git
+#             rev: qa-develop
+#           salt-common:
+#             url: git@github.com:IDCubed/salt-common.git
+#             rev: qa-develop
+#           salt-non-common:
+#             url: git@github.com:IDCubed/salt-non-common.git
+#             rev: qa-develop
+#           inventory:
+#             url: git@github.com:IDCubed/inventory.git
+#             rev: qa-develop
+#            oms-docs:
+#              url: git@github.com:IDCubed/oms-docs.git
+#              rev: qa-develop
+#            oms-deploy:
+#              url: git@github.com:IDCubed/oms-deploy.git
+#              rev: qa-develop
+#            oms-admin:
+#              url: git@github.com:IDCubed/oms-admin.git
+#              rev: qa-develop
+#            oms-kickstart:
+#              url: git@github.com:IDCubed/oms-kickstart.git
+#              rev: qa-develop
+#            oms-oidc:
+#              url: git@github.com:IDCubed/oms-oidc.git
+#              rev: qa-develop
+#           oms-core:
+#              url: git@github.com:IDCubed/oms-core.git
+#              rev: qa-develop
+#            oms-vrc:
+#              url: git@github.com:IDCubed/oms-vrc.git
+#              rev: qa-develop
+#            oms-ui:
+#              url: git@github.com:IDCubed/oms-ui.git
+#              rev: qa-develop
+#            oms-experimental:
+#              url: git@github.com:IDCubed/oms-experimental.git
+#              rev: qa-develop
+#            oms-salt-core:
+#              url: git@github.com:IDCubed/oms-salt-core.git
+#              rev: qa-develop
+#            oms-salt-tcf:
+#              url: git@github.com:IDCubed/oms-salt-tcf.git
+#              rev: qa-develop
 # end embedded pillar config
