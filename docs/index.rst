@@ -4,7 +4,7 @@
 
 .. _overview:
 
-Open Mustard Seed Kickstart
+Kickstart Open Mustard Seed
 ===========================
 
 **A Framework for developing and deploying secure cloud applications to collect,
