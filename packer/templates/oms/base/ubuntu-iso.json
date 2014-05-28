@@ -33,6 +33,7 @@
             "ssh_password": "{{user `system_pass` }}",
             "ssh_wait_timeout": "45m",
             "shutdown_command": "echo '{{user `system_pass` }}' | sudo -S shutdown -P now",
+            "import_opts": "keepallmacs",
             "vboxmanage": [
                 ["modifyvm", "{{.Name}}", "--memory", "{{user `system_memory`}}"]
             ]
@@ -47,10 +48,10 @@
         },
         {
             "type": "shell",
-            "execute_command": "echo '{{user `system_pass` }}' | sudo -E -S sh '{{ .Path }}'",
-            "inline": ["/home/{{user `system_user` }}/kickstart/base.sh",
-                       "/home/{{user `system_user` }}/kickstart/vbox_guest.sh",
-                       "/home/{{user `system_user` }}/kickstart/cleanup.sh"]
+            "execute_command": "chmod +x {{ .Path }}; echo '{{user `system_pass` }}' | {{.Vars}} sudo -E -S sh '{{ .Path }}'",
+            "inline": ["bash -c 'chmod u+x /home/{{user `system_user` }}/kickstart/{,cleanup/}*.sh'",
+                       "/home/{{user `system_user` }}/kickstart/setup.sh",
+                       "/home/{{user `system_user` }}/kickstart/cleanup/network.sh"]
         }
     ]
 }
