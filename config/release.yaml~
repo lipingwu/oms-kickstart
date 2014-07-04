@@ -3,7 +3,7 @@ repos:
   states:
     # starting with v0.8.5, core salt states are in oms-salt-core
     oms-salt-core:
-      url: https://github.com/lipingwu/oms-salt-core.git
+      url: https://github.com/lipingwu/oms-salt-tcf.git
       # use this branch until the current deployment refactor is complete
       rev: master
       # specifies the directory within the repo (where to find states)

@@ -27,13 +27,13 @@ pillar:
   # reclass helps keep us sane
   reclass:
     localhost:
-      #seed reclass' equivalent of salt master tops for this host
+      # seed reclass' equivalent of salt master tops for this host
       classes:
         - oms-tcc-small-community
       # or, instead of the reference TCC, you can comment out the above, and
       # enable the two below to build the OMS TCF without the TCC, for dev.
-        - fullstack
-        - oms-admin
+      # - fullstack
+      # - oms-admin
       # seed reclass' node-specific config keys for salt pillar
       parameters:
         # set this if you would like to override the system's given hostname
@@ -42,14 +42,14 @@ pillar:
         oms:
           # set this to override the default revision (master) for OMS git source
           # clone. this is handy for dev/qa/rc/etc, but is not needed for release
-          # default_rev: '${oms:version}'
+          default_rev: '${oms:version}'
           # this version is written to /etc/oms.conf
-          version: v0.8.5.2
+          version: qa-develop
           # default values for deploy.conf
           # you _MUST_ at the least, uncomment the next two lines, and update
           # the hostname, this should match the DNS entry for the host
-          deploy_defaults:
-            hostname: ubuntu-oms.cs.iastate.edu
+        deploy_defaults:
+           hostname: ubuntu-oms.cs.iastate.edu
 #            oidc_host: '${oms:deploy_defaults:hostname}'
 #            vhost_base_url: 'http://${oms:deploy_defaults:hostname}/'
 #            oidc_base_url: '${oms:deploy_defaults:vhost_base_url}oidc'

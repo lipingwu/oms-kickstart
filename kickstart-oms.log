@@ -1,11 +1,313 @@
-2014-07-03 21:11:15,618 INFO Update apt before we install anything
-2014-07-03 21:11:34,908 INFO Update apt before we install anything
-2014-07-03 21:11:50,006 INFO Install salt-minion package..
-2014-07-03 21:12:28,463 ERROR Unable to parse contents of YAML file config/pillar/release.yaml: while parsing a block mapping
-  in "config/pillar/release.yaml", line 31, column 7
-expected <block end>, but found '<block sequence start>'
-  in "config/pillar/release.yaml", line 35, column 8
-2014-07-03 21:12:28,464 INFO Updating config for salt-minion
-2014-07-03 21:12:28,466 INFO no pillar repo found in config, skipping
-2014-07-03 21:12:28,466 INFO no embedded pillar dictionary found in config, skipping.
-2014-07-03 21:12:28,466 INFO Missing SSH key configuration, hope Git repo is public.
+2014-07-04 13:40:49,279 INFO Update apt before we install anything
+2014-07-04 13:41:02,086 INFO Install salt-minion package..
+2014-07-04 13:41:12,885 INFO Updating config for salt-minion
+2014-07-04 13:41:12,887 INFO no pillar repo found in config, skipping
+2014-07-04 13:41:12,887 INFO Missing SSH key configuration, hope Git repo is public.
+2014-07-04 13:41:37,321 INFO remove temporary path: /tmp/tmpOa_Ydg
+2014-07-04 13:41:37,329 INFO remove temporary path: /tmp/tmpfz6ZVj
+2014-07-04 15:36:08,422 DEBUG Script args: Namespace(configs=['config/release.yaml', 'config/pillar/release.yaml'], debug=True, highstate=True, log_level=10, log_to_file='kickstart-oms.log', skip_minion_install=False, test=False)
+2014-07-04 15:36:08,458 DEBUG OS Distro: precise
+2014-07-04 15:36:08,458 INFO Update apt before we install anything
+2014-07-04 15:36:08,458 DEBUG update apt with: ('apt-get', 'update')
+2014-07-04 15:36:19,442 INFO Install salt-minion package..
+2014-07-04 15:36:19,442 DEBUG Install package python-software-properties, running: apt-get install -y --force-yes python-software-properties
+2014-07-04 15:36:21,122 DEBUG Add package repository (ppa:saltstack/salt17) with ('apt-add-repository', '-y', 'ppa:saltstack/salt17')
+2014-07-04 15:36:23,786 DEBUG update apt with: ('apt-get', 'update')
+2014-07-04 15:36:30,405 DEBUG Install package salt-minion, running: apt-get install -y --force-yes salt-minion
+2014-07-04 15:36:31,329 DEBUG contents of YAML config config/release.yaml: {'repos': {'states': {'oms-salt-tcf': {'url': 'https://github.com/lipingwu/oms-salt-tcf.git', 'rev': 'master'}, 'oms-salt-core': {'url': 'https://github.com/lipingwu/oms-salt-core.git', 'rev': 'master'}}}, 'kickstart_state': {'base_packages': {'pkg': ['latest', {'names': ['git', 'rsync', 'openssh-client']}]}, 'salt_minion_files_roots': {'file': ['directory', {'name': '/etc/salt/states'}, {'makedirs': True}, {'clean': True}, {'require': [{'file': 'install_to'}]}]}, 'ssh_config': {'file': ['managed', {'name': '/etc/ssh/ssh_config'}, {'contents': 'Host *\nStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n'}, {'require': [{'pkg': 'base_packages'}]}]}, 'salt_minion_pillar_roots': {'file': ['directory', {'name': '/etc/salt/pillar'}, {'makedirs': True}, {'clean': True}, {'require': [{'file': 'install_to'}]}]}, 'install_to': {'file': ['directory', {'name': '/etc/salt'}, {'makedirs': True}]}}, 'requirements': [{'pkg': 'base_packages'}, {'file': 'ssh_config'}, {'file': 'salt_minion_files_roots'}, {'file': 'salt_minion_pillar_roots'}], 'minion_config': {'path': '/etc/salt/minion', 'contents': {'include': ['minion.d/*'], 'master': '127.0.0.1', 'file_roots': {'base': ['/etc/salt/states']}, 'pillar_roots': {'base': ['/etc/salt/pillar']}, 'file_client': 'local'}}, 'post_kick': ['state.sls reclass.update_tops', 'state.sls swap', 'cmd.run /root/mkswap.sh', 'state.highstate', 'state.highstate', 'cmd.run oms']}
+2014-07-04 15:36:31,348 DEBUG contents of YAML config config/pillar/release.yaml: {'pillar': {'base_packages': ['build-essential', 'tmux', 'vim', 'git', 'htop', 'wget', 'curl', 'python-setuptools'], 'reclass': {'localhost': {'classes': ['oms-tcc-small-community', 'fullstack', 'oms-admin'], 'parameters': {'oms': {'version': 'v0.8.5.2', 'deploy_defaults': {'hostname': 'ubuntu-oms.cs.iastate.edu'}}}}}}}
+2014-07-04 15:36:31,349 DEBUG imported YAML configs from: ['config/release.yaml', 'config/pillar/release.yaml']
+2014-07-04 15:36:31,350 DEBUG config:
+{
+    "minion_config": {
+        "path": "/etc/salt/minion", 
+        "contents": {
+            "include": [
+                "minion.d/*"
+            ], 
+            "master": "127.0.0.1", 
+            "file_roots": {
+                "base": [
+                    "/etc/salt/states"
+                ]
+            }, 
+            "pillar_roots": {
+                "base": [
+                    "/etc/salt/pillar"
+                ]
+            }, 
+            "file_client": "local"
+        }
+    }, 
+    "kickstart_state": {
+        "base_packages": {
+            "pkg": [
+                "latest", 
+                {
+                    "names": [
+                        "git", 
+                        "rsync", 
+                        "openssh-client"
+                    ]
+                }
+            ]
+        }, 
+        "salt_minion_files_roots": {
+            "file": [
+                "directory", 
+                {
+                    "name": "/etc/salt/states"
+                }, 
+                {
+                    "makedirs": true
+                }, 
+                {
+                    "clean": true
+                }, 
+                {
+                    "require": [
+                        {
+                            "file": "install_to"
+                        }
+                    ]
+                }
+            ]
+        }, 
+        "ssh_config": {
+            "file": [
+                "managed", 
+                {
+                    "name": "/etc/ssh/ssh_config"
+                }, 
+                {
+                    "contents": "Host *\nStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n"
+                }, 
+                {
+                    "require": [
+                        {
+                            "pkg": "base_packages"
+                        }
+                    ]
+                }
+            ]
+        }, 
+        "salt_minion_pillar_roots": {
+            "file": [
+                "directory", 
+                {
+                    "name": "/etc/salt/pillar"
+                }, 
+                {
+                    "makedirs": true
+                }, 
+                {
+                    "clean": true
+                }, 
+                {
+                    "require": [
+                        {
+                            "file": "install_to"
+                        }
+                    ]
+                }
+            ]
+        }, 
+        "install_to": {
+            "file": [
+                "directory", 
+                {
+                    "name": "/etc/salt"
+                }, 
+                {
+                    "makedirs": true
+                }
+            ]
+        }
+    }, 
+    "requirements": [
+        {
+            "pkg": "base_packages"
+        }, 
+        {
+            "file": "ssh_config"
+        }, 
+        {
+            "file": "salt_minion_files_roots"
+        }, 
+        {
+            "file": "salt_minion_pillar_roots"
+        }
+    ], 
+    "post_kick": [
+        "state.sls reclass.update_tops", 
+        "state.sls swap", 
+        "cmd.run /root/mkswap.sh", 
+        "state.highstate", 
+        "state.highstate", 
+        "cmd.run oms"
+    ], 
+    "repos": {
+        "states": {
+            "oms-salt-tcf": {
+                "url": "https://github.com/lipingwu/oms-salt-tcf.git", 
+                "rev": "master"
+            }, 
+            "oms-salt-core": {
+                "url": "https://github.com/lipingwu/oms-salt-core.git", 
+                "rev": "master"
+            }
+        }
+    }, 
+    "pillar": {
+        "base_packages": [
+            "build-essential", 
+            "tmux", 
+            "vim", 
+            "git", 
+            "htop", 
+            "wget", 
+            "curl", 
+            "python-setuptools"
+        ], 
+        "reclass": {
+            "localhost": {
+                "classes": [
+                    "oms-tcc-small-community", 
+                    "fullstack", 
+                    "oms-admin"
+                ], 
+                "parameters": {
+                    "oms": {
+                        "version": "v0.8.5.2", 
+                        "deploy_defaults": {
+                            "hostname": "ubuntu-oms.cs.iastate.edu"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+2014-07-04 15:36:31,354 INFO Updating config for salt-minion
+2014-07-04 15:36:31,355 DEBUG contents: {
+    "include": [
+        "minion.d/*"
+    ], 
+    "master": "127.0.0.1", 
+    "file_roots": {
+        "base": [
+            "/etc/salt/states"
+        ]
+    }, 
+    "pillar_roots": {
+        "base": [
+            "/etc/salt/pillar"
+        ]
+    }, 
+    "file_client": "local"
+}
+2014-07-04 15:36:31,357 DEBUG state repos: {'oms-salt-tcf': {'url': 'https://github.com/lipingwu/oms-salt-tcf.git', 'rev': 'master'}, 'oms-salt-core': {'url': 'https://github.com/lipingwu/oms-salt-core.git', 'rev': 'master'}}
+2014-07-04 15:36:31,357 INFO no pillar repo found in config, skipping
+2014-07-04 15:36:31,357 INFO Missing SSH key configuration, hope Git repo is public.
+2014-07-04 15:36:31,382 DEBUG updated kickstart state (yaml):
+/etc/salt/pillar/bootstrap.sls:
+    file:
+    - managed
+    - {contents: "base_packages: [build-essential, tmux, vim, git, htop, wget, curl,\
+            \ python-setuptools]\nreclass:\n  localhost:\n    classes: [oms-tcc-small-community,\
+            \ fullstack, oms-admin]\n    parameters:\n      oms:\n        deploy_defaults:\
+            \ {hostname: ubuntu-oms.cs.iastate.edu}\n        version: v0.8.5.2\n"}
+    -   require:
+        - {file: /etc/salt/pillar}
+/etc/salt/pillar/top.sls:
+    file:
+    - managed
+    - {contents: "base:\n  '*':\n    - bootstrap"}
+    -   require:
+        - {file: /etc/salt/pillar}
+base_packages:
+    pkg:
+    - latest
+    -   names: [git, rsync, openssh-client]
+install_to:
+    file:
+    - directory
+    - {name: /etc/salt}
+    - {makedirs: true}
+oms-salt-core:
+    cmd:
+    - run
+    - {name: rsync -av /tmp/tmpX7HVCB/ /etc/salt/states/}
+    -   require:
+        - {git: oms-salt-core}
+    file:
+    - absent
+    - {name: /tmp/tmpX7HVCB/.git}
+    -   require:
+        - {git: oms-salt-core}
+    git:
+    - latest
+    - {name: 'https://github.com/lipingwu/oms-salt-core.git'}
+    - {target: /tmp/tmpX7HVCB}
+    -   require: &id001
+        - {pkg: base_packages}
+        - {file: ssh_config}
+        - {file: salt_minion_files_roots}
+        - {file: salt_minion_pillar_roots}
+    - {rev: master}
+oms-salt-tcf:
+    cmd:
+    - run
+    - {name: rsync -av /tmp/tmph6sqaS/ /etc/salt/states/}
+    -   require:
+        - {git: oms-salt-tcf}
+    file:
+    - absent
+    - {name: /tmp/tmph6sqaS/.git}
+    -   require:
+        - {git: oms-salt-tcf}
+    git:
+    - latest
+    - {name: 'https://github.com/lipingwu/oms-salt-tcf.git'}
+    - {target: /tmp/tmph6sqaS}
+    -   require: *id001
+    - {rev: master}
+salt_minion_files_roots:
+    file:
+    - directory
+    - {name: /etc/salt/states}
+    - {makedirs: true}
+    - {clean: true}
+    -   require:
+        - {file: install_to}
+salt_minion_pillar_roots:
+    file:
+    - directory
+    - {name: /etc/salt/pillar}
+    - {makedirs: true}
+    - {clean: true}
+    -   require:
+        - {file: install_to}
+ssh_config:
+    file:
+    - managed
+    - {name: /etc/ssh/ssh_config}
+    - {contents: 'Host *
+
+            StrictHostKeyChecking no
+
+            UserKnownHostsFile=/dev/null
+
+            '}
+    -   require:
+        - {pkg: base_packages}
+
+2014-07-04 15:36:31,392 DEBUG loading salt client
+2014-07-04 15:36:32,011 DEBUG running state.high to apply base states
+2014-07-04 15:36:45,939 DEBUG run state.highstate to apply states from external repo
+2014-07-04 15:36:53,842 DEBUG calling post kickstart function state.sls reclass.update_tops
+2014-07-04 15:36:54,609 DEBUG calling post kickstart function state.sls swap
+2014-07-04 15:36:55,169 DEBUG calling post kickstart function cmd.run /root/mkswap.sh
+2014-07-04 15:36:55,590 DEBUG calling post kickstart function state.highstate
+2014-07-04 15:36:56,127 DEBUG calling post kickstart function state.highstate
+2014-07-04 15:36:56,658 DEBUG calling post kickstart function cmd.run oms
