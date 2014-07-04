@@ -1,0 +1,102 @@
+2014-07-03 18:22:47,929 INFO Test mode enabled, no actions will be taken
+2014-07-03 18:22:47,963 INFO Update apt before we install anything
+2014-07-03 18:22:47,964 INFO Install salt-minion package..
+2014-07-03 18:49:46,418 INFO Test mode enabled, no actions will be taken
+2014-07-03 18:49:46,454 INFO Update apt before we install anything
+2014-07-03 18:49:46,454 INFO Install salt-minion package..
+2014-07-03 18:49:46,483 INFO Updating config for salt-minion
+2014-07-03 18:49:46,483 INFO no pillar repo found in config, skipping
+2014-07-03 18:49:46,483 INFO no embedded pillar dictionary found in config, skipping.
+2014-07-03 18:49:46,483 INFO Missing SSH key configuration, hope Git repo is public.
+2014-07-03 18:49:46,484 INFO in test mode.. skipping state execution
+2014-07-03 18:52:26,203 DEBUG Script args: Namespace(configs=None, debug=True, highstate=False, log_level=10, log_to_file='kickstart.log', skip_minion_install=False, test=True)
+2014-07-03 18:52:26,203 INFO Test mode enabled, no actions will be taken
+2014-07-03 18:52:26,239 DEBUG OS Distro: precise
+2014-07-03 18:52:26,240 INFO Update apt before we install anything
+2014-07-03 18:52:26,240 DEBUG update apt with: ('apt-get', 'update')
+2014-07-03 18:52:26,240 INFO Install salt-minion package..
+2014-07-03 18:52:26,240 DEBUG Install package python-software-properties, running: apt-get install -y --force-yes python-software-properties
+2014-07-03 18:52:26,240 DEBUG Add package repository (ppa:saltstack/salt17) with ('apt-add-repository', '-y', 'ppa:saltstack/salt17')
+2014-07-03 18:52:26,240 DEBUG update apt with: ('apt-get', 'update')
+2014-07-03 18:52:26,240 DEBUG Install package salt-minion, running: apt-get install -y --force-yes salt-minion
+2014-07-03 18:52:26,267 INFO Updating config for salt-minion
+2014-07-03 18:52:26,267 DEBUG contents: {
+    "log_level": "debug", 
+    "file_client": "local", 
+    "master": "127.0.0.1", 
+    "pillar_roots": {
+        "base": [
+            "/etc/salt/pillar"
+        ]
+    }, 
+    "id": "ubuntu-oms", 
+    "file_roots": {
+        "base": [
+            "/etc/salt/states"
+        ]
+    }
+}
+2014-07-03 18:52:26,268 DEBUG state repos: {'oms-kickstart': {'url': 'git@github.com:IDCubed/oms-kickstart.git', 'rev': 'master', 'copy_path': 'salt/states'}}
+2014-07-03 18:52:26,268 INFO no pillar repo found in config, skipping
+2014-07-03 18:52:26,268 INFO no embedded pillar dictionary found in config, skipping.
+2014-07-03 18:52:26,268 INFO Missing SSH key configuration, hope Git repo is public.
+2014-07-03 18:52:26,277 DEBUG updated kickstart state (yaml):
+base_packages:
+    pkg:
+    - latest
+    -   names: [git, rsync, openssh-client]
+install_to:
+    file:
+    - directory
+    - {name: /etc/salt}
+    - {makedirs: true}
+oms-kickstart:
+    cmd:
+    - run
+    - {name: rsync -av /tmp/tmphccEwR/salt/states/ /etc/salt/states/}
+    -   require:
+        - {git: oms-kickstart}
+    file:
+    - absent
+    - {name: /tmp/tmphccEwR/.git}
+    -   require:
+        - {git: oms-kickstart}
+    git:
+    - latest
+    - {name: 'git@github.com:IDCubed/oms-kickstart.git'}
+    - {target: /tmp/tmphccEwR}
+    -   require:
+        - {pkg: base_packages}
+        - {file: ssh_config}
+        - {file: salt_minion_files_roots}
+        - {file: salt_minion_pillar_roots}
+    - {rev: master}
+salt_minion_files_roots:
+    file:
+    - directory
+    - {name: /etc/salt/states}
+    - {makedirs: true}
+    - {clean: true}
+    -   require:
+        - {file: install_to}
+salt_minion_pillar_roots:
+    file:
+    - directory
+    - {name: /etc/salt/pillar}
+    - {makedirs: true}
+    - {clean: true}
+    -   require:
+        - {file: install_to}
+ssh_config:
+    file:
+    - managed
+    - {name: /etc/ssh/ssh_config}
+    - {contents: 'Host *
+
+            StrictHostKeyChecking no
+
+            UserKnownHostsFile=/dev/null'}
+    -   require:
+        - {pkg: base_packages}
+
+2014-07-03 18:52:26,278 INFO in test mode.. skipping state execution

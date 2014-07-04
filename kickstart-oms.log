@@ -1,0 +1,11 @@
+2014-07-03 21:11:15,618 INFO Update apt before we install anything
+2014-07-03 21:11:34,908 INFO Update apt before we install anything
+2014-07-03 21:11:50,006 INFO Install salt-minion package..
+2014-07-03 21:12:28,463 ERROR Unable to parse contents of YAML file config/pillar/release.yaml: while parsing a block mapping
+  in "config/pillar/release.yaml", line 31, column 7
+expected <block end>, but found '<block sequence start>'
+  in "config/pillar/release.yaml", line 35, column 8
+2014-07-03 21:12:28,464 INFO Updating config for salt-minion
+2014-07-03 21:12:28,466 INFO no pillar repo found in config, skipping
+2014-07-03 21:12:28,466 INFO no embedded pillar dictionary found in config, skipping.
+2014-07-03 21:12:28,466 INFO Missing SSH key configuration, hope Git repo is public.
